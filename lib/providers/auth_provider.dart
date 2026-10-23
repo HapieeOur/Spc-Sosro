@@ -64,7 +64,7 @@ class AuthController extends StateNotifier<AuthState> {
       final profile = await _profileRepo.fetchCurrentProfile();
       if (!profile.isActive) {
         await _authRepo.signOut();
-        state = const AuthStateDenied('Akun Anda dinonaktifkan. Hubungi administrator.');
+        state = const AuthStateDenied('Akun Anda dinonaktifkan atau masih menunggu persetujuan (ACC) Admin.');
         return;
       }
 
@@ -86,7 +86,7 @@ class AuthController extends StateNotifier<AuthState> {
 
       if (!profile.isActive) {
         await _authRepo.signOut();
-        state = const AuthStateDenied('Akun Anda dinonaktifkan. Hubungi administrator.');
+        state = const AuthStateDenied('Akun Anda sedang menunggu persetujuan (ACC) Admin. Silakan hubungi Administrator gudang.');
         return;
       }
 
@@ -97,6 +97,32 @@ class AuthController extends StateNotifier<AuthState> {
       } else {
         state = AuthStateError(e.toString());
       }
+    }
+  }
+
+  Future<bool> register({
+    required String email,
+    required String password,
+    required String fullName,
+  }) async {
+    state = const AuthStateLoading();
+    try {
+      await _authRepo.signUp(
+        email: email,
+        password: password,
+        fullName: fullName,
+      );
+      // Keluarkan sesi otomatis karena akun baru berstatus pending approval
+      await _authRepo.signOut();
+      state = const AuthStateSignedOut();
+      return true;
+    } catch (e) {
+      if (e is AppException) {
+        state = AuthStateError(e.message);
+      } else {
+        state = AuthStateError(e.toString());
+      }
+      return false;
     }
   }
 

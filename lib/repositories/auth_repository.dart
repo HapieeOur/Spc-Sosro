@@ -21,6 +21,22 @@ class AuthRepository {
     }
   }
 
+  Future<AuthResponse> signUp({
+    required String email,
+    required String password,
+    required String fullName,
+  }) async {
+    try {
+      return await SupabaseService.auth.signUp(
+        email: email,
+        password: password,
+        data: {'full_name': fullName},
+      );
+    } catch (e) {
+      throw ErrorMapper.mapSupabaseError(e);
+    }
+  }
+
   Future<void> signOut() async {
     try {
       await SupabaseService.auth.signOut();

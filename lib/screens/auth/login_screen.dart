@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:spc_sosro/core/theme/app_colors.dart';
 import 'package:spc_sosro/core/utils/validators.dart';
 import 'package:spc_sosro/providers/auth_provider.dart';
@@ -202,13 +203,26 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         ),
                         const SizedBox(height: 20),
 
-                        const Center(
-                          child: Text(
-                            'Belum punya akun? Minta Admin membuatkan akun.',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 13,
-                              color: AppColors.abuTinta,
+                        Center(
+                          child: TextButton(
+                            onPressed: () => context.go('/register'),
+                            child: const Text.rich(
+                              TextSpan(
+                                text: 'Belum punya akun? ',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: AppColors.abuTinta,
+                                ),
+                                children: [
+                                  TextSpan(
+                                    text: 'Daftar Operator',
+                                    style: TextStyle(
+                                      color: AppColors.daun,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),

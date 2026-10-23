@@ -5,6 +5,7 @@ import 'package:spc_sosro/core/constants/app_constants.dart';
 import 'package:spc_sosro/providers/auth_provider.dart';
 import 'package:spc_sosro/screens/admin/admin_dashboard_screen.dart';
 import 'package:spc_sosro/screens/auth/login_screen.dart';
+import 'package:spc_sosro/screens/auth/register_screen.dart';
 import 'package:spc_sosro/screens/shared/profile_screen.dart';
 import 'package:spc_sosro/screens/splash_screen.dart';
 import 'package:spc_sosro/screens/user/transaction_history_screen.dart';
@@ -34,6 +35,7 @@ final routerProvider = Provider<GoRouter>((ref) {
     redirect: (context, state) {
       final authState = ref.read(authControllerProvider);
       final isOnLogin = state.matchedLocation == '/login';
+      final isOnRegister = state.matchedLocation == '/register';
       final isOnSplash = state.matchedLocation == '/splash';
 
       // Selama pengecekan sesi awal, tetap di splash
@@ -41,14 +43,15 @@ final routerProvider = Provider<GoRouter>((ref) {
         return isOnSplash ? null : '/splash';
       }
 
-      // Jika belum autentikasi, arahkan ke login
+      // Jika belum autentikasi, izinkan login dan register
       if (authState is! AuthStateAuthenticated) {
-        return isOnLogin ? null : '/login';
+        if (isOnLogin || isOnRegister) return null;
+        return '/login';
       }
 
       final profile = authState.profile;
       final isAdmin = profile.role == AppRole.admin;
-      final isOnAuthScreen = isOnLogin || isOnSplash;
+      final isOnAuthScreen = isOnLogin || isOnRegister || isOnSplash;
 
       if (isOnAuthScreen) {
         return isAdmin ? '/admin/dashboard' : '/user/dashboard';
@@ -69,6 +72,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/login',
         builder: (context, state) => const LoginScreen(),
+      ),
+      GoRoute(
+        path: '/register',
+        builder: (context, state) => const RegisterScreen(),
       ),
 
       ShellRoute(
