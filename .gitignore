@@ -46,3 +46,11 @@ app.*.map.json
 
 # Widget Preview related
 .widget_preview/
+
+# Environment config
+env.json
+
+# Signing keys
+*.jks
+*.keystore
+key.properties
