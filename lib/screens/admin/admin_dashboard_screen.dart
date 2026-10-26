@@ -55,27 +55,44 @@ class AdminDashboardScreen extends ConsumerWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                              decoration: BoxDecoration(
-                                color: AppColors.daunMuda,
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                              child: const Text(
-                                'PANEL ADMINISTRATOR',
-                                style: TextStyle(
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w800,
-                                  color: AppColors.daunTua,
-                                  letterSpacing: 0.5,
+                            Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                  child: Image.asset(
+                                    'assets/images/sosro_logo_cropped.png',
+                                    height: 16,
+                                    fit: BoxFit.contain,
+                                  ),
                                 ),
-                              ),
+                                const SizedBox(width: 8),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.merahMuda,
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                  child: const Text(
+                                    'ADMINISTRATOR',
+                                    style: TextStyle(
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w800,
+                                      color: AppColors.merahTua,
+                                      letterSpacing: 0.5,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                             Text(
                               DateFormatter.formatDate(DateTime.now()),
                               style: const TextStyle(
                                 fontSize: 12,
-                                color: AppColors.daunMuda,
+                                color: AppColors.merahMuda,
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
@@ -156,7 +173,7 @@ class AdminDashboardScreen extends ConsumerWidget {
 
                       // Quick Shortcut Buttons
                       const Text(
-                        'Aksi Cepat',
+                        'Aksi & Menu Administrasi',
                         style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w700,
@@ -190,6 +207,46 @@ class AdminDashboardScreen extends ConsumerWidget {
                               label: 'Semua Transaksi',
                               color: AppColors.tinta,
                               onTap: () => context.go('/admin/transactions'),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _buildQuickButton(
+                              icon: Icons.bar_chart_outlined,
+                              label: 'Rekap Laporan',
+                              color: AppColors.daun,
+                              onTap: () => context.go('/admin/reports'),
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: _buildQuickButton(
+                              icon: Icons.edit_note_outlined,
+                              label: 'Koreksi Transaksi',
+                              color: AppColors.kuningMarka,
+                              onTap: () => context.go('/admin/corrections'),
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: _buildQuickButton(
+                              icon: Icons.account_balance_wallet_outlined,
+                              label: 'Saldo Awal',
+                              color: AppColors.biruTruk,
+                              onTap: () => context.go('/admin/settings'),
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: _buildQuickButton(
+                              icon: Icons.history_rounded,
+                              label: 'Log Audit',
+                              color: AppColors.abuTinta,
+                              onTap: () => context.go('/admin/activity'),
                             ),
                           ),
                         ],
@@ -234,17 +291,31 @@ class AdminDashboardScreen extends ConsumerWidget {
   }) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(8),
+      borderRadius: BorderRadius.circular(10),
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
         decoration: BoxDecoration(
           color: AppColors.permukaan,
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(10),
           border: Border.all(color: AppColors.garis),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.03),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
         child: Column(
           children: [
-            Icon(icon, color: color, size: 22),
+            Container(
+              padding: const EdgeInsets.all(6),
+              decoration: BoxDecoration(
+                color: color.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(icon, color: color, size: 20),
+            ),
             const SizedBox(height: 6),
             Text(
               label,

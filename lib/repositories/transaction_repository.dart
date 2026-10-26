@@ -1,6 +1,7 @@
 import 'package:spc_sosro/core/constants/app_constants.dart';
 import 'package:spc_sosro/core/errors/error_mapper.dart';
 import 'package:spc_sosro/models/stock_transaction.dart';
+import 'package:spc_sosro/models/transaction_correction.dart';
 import 'package:spc_sosro/services/supabase_service.dart';
 
 class TransactionRepository {
@@ -119,6 +120,21 @@ class TransactionRepository {
           .single();
 
       return StockTransaction.fromJson(response);
+    } catch (e) {
+      throw ErrorMapper.mapSupabaseError(e);
+    }
+  }
+
+  Future<List<TransactionCorrection>> fetchCorrections() async {
+    try {
+      final response = await SupabaseService.client
+          .from('transaction_corrections')
+          .select()
+          .order('corrected_at', ascending: false);
+
+      return (response as List)
+          .map((json) => TransactionCorrection.fromJson(json as Map<String, dynamic>))
+          .toList();
     } catch (e) {
       throw ErrorMapper.mapSupabaseError(e);
     }

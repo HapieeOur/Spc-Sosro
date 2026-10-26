@@ -3,10 +3,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:spc_sosro/core/constants/app_constants.dart';
 import 'package:spc_sosro/providers/auth_provider.dart';
+import 'package:spc_sosro/screens/admin/activity_log_screen.dart';
 import 'package:spc_sosro/screens/admin/admin_dashboard_screen.dart';
 import 'package:spc_sosro/screens/admin/admin_shell.dart';
 import 'package:spc_sosro/screens/admin/all_transactions_screen.dart';
+import 'package:spc_sosro/screens/admin/correction_screen.dart';
 import 'package:spc_sosro/screens/admin/products_screen.dart';
+import 'package:spc_sosro/screens/admin/reports_screen.dart';
+import 'package:spc_sosro/screens/admin/settings_screen.dart';
 import 'package:spc_sosro/screens/admin/users_screen.dart';
 import 'package:spc_sosro/screens/auth/login_screen.dart';
 import 'package:spc_sosro/screens/auth/register_screen.dart';
@@ -119,6 +123,22 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/admin/transactions',
             builder: (context, state) => const AllTransactionsScreen(),
+          ),
+          GoRoute(
+            path: '/admin/reports',
+            builder: (context, state) => const ReportsScreen(),
+          ),
+          GoRoute(
+            path: '/admin/corrections',
+            builder: (context, state) => const CorrectionScreen(),
+          ),
+          GoRoute(
+            path: '/admin/settings',
+            builder: (context, state) => const SettingsScreen(),
+          ),
+          GoRoute(
+            path: '/admin/activity',
+            builder: (context, state) => const ActivityLogScreen(),
           ),
           GoRoute(
             path: '/admin/profile',

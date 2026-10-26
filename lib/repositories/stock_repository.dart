@@ -1,5 +1,6 @@
 import 'package:spc_sosro/core/errors/error_mapper.dart';
 import 'package:spc_sosro/models/dashboard_data.dart';
+import 'package:spc_sosro/models/stock_opening_balance.dart';
 import 'package:spc_sosro/models/stock_summary.dart';
 import 'package:spc_sosro/services/supabase_service.dart';
 
@@ -70,6 +71,21 @@ class StockRepository {
           'p_note': note,
         },
       );
+    } catch (e) {
+      throw ErrorMapper.mapSupabaseError(e);
+    }
+  }
+
+  Future<List<StockOpeningBalance>> fetchOpeningBalances() async {
+    try {
+      final response = await SupabaseService.client
+          .from('stock_opening_balances')
+          .select()
+          .order('effective_date', ascending: false);
+
+      return (response as List)
+          .map((json) => StockOpeningBalance.fromJson(json as Map<String, dynamic>))
+          .toList();
     } catch (e) {
       throw ErrorMapper.mapSupabaseError(e);
     }
