@@ -4,6 +4,10 @@ import 'package:go_router/go_router.dart';
 import 'package:spc_sosro/core/constants/app_constants.dart';
 import 'package:spc_sosro/providers/auth_provider.dart';
 import 'package:spc_sosro/screens/admin/admin_dashboard_screen.dart';
+import 'package:spc_sosro/screens/admin/admin_shell.dart';
+import 'package:spc_sosro/screens/admin/all_transactions_screen.dart';
+import 'package:spc_sosro/screens/admin/products_screen.dart';
+import 'package:spc_sosro/screens/admin/users_screen.dart';
 import 'package:spc_sosro/screens/auth/login_screen.dart';
 import 'package:spc_sosro/screens/auth/register_screen.dart';
 import 'package:spc_sosro/screens/shared/profile_screen.dart';
@@ -96,13 +100,31 @@ final routerProvider = Provider<GoRouter>((ref) {
         ],
       ),
 
-      GoRoute(
-        path: '/admin/dashboard',
-        builder: (context, state) => const AdminDashboardScreen(),
-      ),
-      GoRoute(
-        path: '/admin/profile',
-        builder: (context, state) => const ProfileScreen(),
+      // Route Admin (dalam shell navigation bar)
+      ShellRoute(
+        builder: (context, state, child) => AdminShell(child: child),
+        routes: [
+          GoRoute(
+            path: '/admin/dashboard',
+            builder: (context, state) => const AdminDashboardScreen(),
+          ),
+          GoRoute(
+            path: '/admin/users',
+            builder: (context, state) => const UsersScreen(),
+          ),
+          GoRoute(
+            path: '/admin/products',
+            builder: (context, state) => const ProductsScreen(),
+          ),
+          GoRoute(
+            path: '/admin/transactions',
+            builder: (context, state) => const AllTransactionsScreen(),
+          ),
+          GoRoute(
+            path: '/admin/profile',
+            builder: (context, state) => const ProfileScreen(),
+          ),
+        ],
       ),
     ],
   );
