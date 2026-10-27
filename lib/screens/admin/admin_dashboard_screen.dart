@@ -337,7 +337,7 @@ class AdminDashboardScreen extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // 1. Grid 2x2 Metric Cards (Gaya Taktil Modern dengan Squircle Icon Badge)
+        // 1. Grid 2x2 Metric Cards (Gaya Taktil Modern bertema Merah & Putih)
         Row(
           children: [
             Expanded(
@@ -346,8 +346,8 @@ class AdminDashboardScreen extends ConsumerWidget {
                 value: '${NumberFormatter.formatNumber(data.todayInBoxes)} Dus',
                 subtitle: '≈ ${NumberFormatter.formatDecimal(data.todayInPalletEquivalent)} Palet',
                 icon: Icons.south_west_rounded,
-                iconColor: const Color(0xFF15803D),
-                iconBgColor: const Color(0xFFDCFCE7),
+                iconColor: AppColors.merahSosro,
+                iconBgColor: AppColors.merahMuda,
               ),
             ),
             const SizedBox(width: 12),
@@ -357,8 +357,8 @@ class AdminDashboardScreen extends ConsumerWidget {
                 value: '${NumberFormatter.formatNumber(data.todayOutBoxes)} Dus',
                 subtitle: '≈ ${NumberFormatter.formatDecimal(data.todayOutPalletEquivalent)} Palet',
                 icon: Icons.north_east_rounded,
-                iconColor: AppColors.merahSosro,
-                iconBgColor: const Color(0xFFFEE2E2),
+                iconColor: const Color(0xFFC52227),
+                iconBgColor: const Color(0xFFFFF1F2),
               ),
             ),
           ],
@@ -372,8 +372,8 @@ class AdminDashboardScreen extends ConsumerWidget {
                 value: '${NumberFormatter.formatNumber(totalBoxes)} Dus',
                 subtitle: '${NumberFormatter.formatNumber(totalPallets)} Palet Utuh',
                 icon: Icons.inventory_2_outlined,
-                iconColor: AppColors.biruTruk,
-                iconBgColor: const Color(0xFFDBEAFE),
+                iconColor: AppColors.merahTua,
+                iconBgColor: AppColors.merahMuda,
               ),
             ),
             const SizedBox(width: 12),
@@ -383,8 +383,8 @@ class AdminDashboardScreen extends ConsumerWidget {
                 value: '$pendingCount Akun',
                 subtitle: pendingCount > 0 ? 'Perlu ACC Admin' : 'Semua Terverifikasi',
                 icon: Icons.people_alt_outlined,
-                iconColor: const Color(0xFFD97706),
-                iconBgColor: const Color(0xFFFEF3C7),
+                iconColor: pendingCount > 0 ? AppColors.kuningMarka : AppColors.merahSosro,
+                iconBgColor: pendingCount > 0 ? AppColors.kuningMarkaMuda : AppColors.merahMuda,
                 onTap: () => context.go('/admin/users'),
               ),
             ),
@@ -392,11 +392,11 @@ class AdminDashboardScreen extends ConsumerWidget {
         ),
         const SizedBox(height: 20),
 
-        // 2. Analytics Card (Gaya Layar "analytics" pada referensi)
+        // 2. Analytics Card (Gaya Layar "analytics" dengan palet Merah-Putih)
         _buildAnalyticsCard(data.sevenDayTrend),
         const SizedBox(height: 20),
 
-        // 3. Quick Action Grid (Gaya 4 Kartu "Quick Action" pada referensi)
+        // 3. Quick Action Grid (Gaya 4 Kartu "Quick Action" bertema Merah-Putih)
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -430,7 +430,7 @@ class AdminDashboardScreen extends ConsumerWidget {
                 label: 'Transaksi',
                 subtitle: 'Pencatatan',
                 tintColor: AppColors.merahSosro,
-                tintBg: const Color(0xFFFEE2E2),
+                tintBg: AppColors.merahMuda,
                 onTap: () => context.go('/admin/transactions'),
               ),
             ),
@@ -440,8 +440,8 @@ class AdminDashboardScreen extends ConsumerWidget {
                 icon: Icons.inventory_2_outlined,
                 label: 'Produk',
                 subtitle: 'Master SKU',
-                tintColor: AppColors.biruTruk,
-                tintBg: const Color(0xFFDBEAFE),
+                tintColor: AppColors.merahSosro,
+                tintBg: AppColors.merahMuda,
                 onTap: () => context.go('/admin/products'),
               ),
             ),
@@ -451,8 +451,8 @@ class AdminDashboardScreen extends ConsumerWidget {
                 icon: Icons.bar_chart_outlined,
                 label: 'Laporan',
                 subtitle: 'PDF & CSV',
-                tintColor: const Color(0xFF15803D),
-                tintBg: const Color(0xFFDCFCE7),
+                tintColor: AppColors.merahSosro,
+                tintBg: AppColors.merahMuda,
                 onTap: () => context.go('/admin/reports'),
               ),
             ),
@@ -462,8 +462,8 @@ class AdminDashboardScreen extends ConsumerWidget {
                 icon: Icons.people_outline_rounded,
                 label: 'Pengguna',
                 subtitle: 'ACC Operator',
-                tintColor: const Color(0xFFD97706),
-                tintBg: const Color(0xFFFEF3C7),
+                tintColor: AppColors.merahSosro,
+                tintBg: AppColors.merahMuda,
                 onTap: () => context.go('/admin/users'),
               ),
             ),
@@ -752,13 +752,13 @@ class AdminDashboardScreen extends ConsumerWidget {
           barRods: [
             BarChartRodData(
               toY: inQty,
-              color: const Color(0xFF16A34A),
+              color: AppColors.merahSosro,
               width: 9,
               borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
             ),
             BarChartRodData(
               toY: outQty,
-              color: AppColors.merahSosro,
+              color: const Color(0xFFE11D48),
               width: 9,
               borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
             ),
@@ -892,9 +892,9 @@ class AdminDashboardScreen extends ConsumerWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              _buildLegendPill(color: const Color(0xFF16A34A), label: 'Stok Masuk'),
+              _buildLegendPill(color: AppColors.merahSosro, label: 'Stok Masuk'),
               const SizedBox(width: 14),
-              _buildLegendPill(color: AppColors.merahSosro, label: 'Stok Keluar'),
+              _buildLegendPill(color: const Color(0xFFE11D48), label: 'Stok Keluar'),
             ],
           ),
         ],
