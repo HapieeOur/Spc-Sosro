@@ -20,6 +20,7 @@ class ProductsScreen extends ConsumerStatefulWidget {
 class _ProductsScreenState extends ConsumerState<ProductsScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
+  bool _isGridView = true;
 
   @override
   void dispose() {
@@ -44,70 +45,99 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
     final productsAsync = ref.watch(allProductsProvider);
 
     return Scaffold(
-      backgroundColor: AppColors.kertas,
+      backgroundColor: const Color(0xFFF4F6FA),
       appBar: AppBar(
         title: const Text(
-          'Master Produk & Palet',
+          'Master Produk',
           style: TextStyle(
-            fontWeight: FontWeight.w700,
-            fontSize: 18,
+            fontWeight: FontWeight.w800,
+            fontSize: 22,
             color: AppColors.tinta,
+            letterSpacing: -0.3,
           ),
         ),
-        backgroundColor: AppColors.permukaan,
+        backgroundColor: Colors.transparent,
         elevation: 0,
         surfaceTintColor: Colors.transparent,
         actions: [
           IconButton(
-            tooltip: 'Tambah Produk',
-            icon: const Icon(Icons.add_circle, color: AppColors.daun, size: 28),
-            onPressed: () => _openProductDialog(),
+            tooltip: _isGridView ? 'Tampilan List' : 'Tampilan Grid',
+            icon: Icon(
+              _isGridView ? Icons.view_list_rounded : Icons.grid_view_rounded,
+              color: AppColors.abuTinta,
+            ),
+            onPressed: () => setState(() => _isGridView = !_isGridView),
           ),
-          const SizedBox(width: 8),
+          Container(
+            margin: const EdgeInsets.only(right: 16),
+            child: ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.merahSosro,
+                foregroundColor: Colors.white,
+                elevation: 0,
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              icon: const Icon(Icons.add, size: 18),
+              label: const Text(
+                'Tambah',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+              ),
+              onPressed: () => _openProductDialog(),
+            ),
+          ),
         ],
       ),
       body: Column(
         children: [
-          // Search Bar
+          // Search Bar (Gaya Membulat seperti pada referensi "Product Feed")
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-            child: TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                hintText: 'Cari kode atau nama produk...',
-                prefixIcon: const Icon(Icons.search, color: AppColors.abuTinta),
-                suffixIcon: _searchQuery.isNotEmpty
-                    ? IconButton(
-                        icon: const Icon(Icons.clear, color: AppColors.abuTinta),
-                        onPressed: () {
-                          setState(() {
-                            _searchController.clear();
-                            _searchQuery = '';
-                          });
-                        },
-                      )
-                    : null,
-                filled: true,
-                fillColor: AppColors.permukaan,
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: const BorderSide(color: AppColors.garis),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: const BorderSide(color: AppColors.garis),
-                ),
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: const Color(0xFFE2E8F0)),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.02),
+                    blurRadius: 6,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
               ),
-              onChanged: (val) {
-                setState(() {
-                  _searchQuery = val.trim();
-                });
-              },
+              child: TextField(
+                controller: _searchController,
+                decoration: InputDecoration(
+                  hintText: 'Cari kode atau nama produk Sosro...',
+                  hintStyle: const TextStyle(fontSize: 13, color: Color(0xFF94A3B8)),
+                  prefixIcon: const Icon(Icons.search_rounded, color: AppColors.abuTinta, size: 20),
+                  suffixIcon: _searchQuery.isNotEmpty
+                      ? IconButton(
+                          icon: const Icon(Icons.clear, color: AppColors.abuTinta, size: 18),
+                          onPressed: () {
+                            setState(() {
+                              _searchController.clear();
+                              _searchQuery = '';
+                            });
+                          },
+                        )
+                      : null,
+                  border: InputBorder.none,
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                ),
+                onChanged: (val) {
+                  setState(() {
+                    _searchQuery = val.trim();
+                  });
+                },
+              ),
             ),
           ),
 
-          // Product List
+          // Product Feed
           Expanded(
             child: productsAsync.when(
               data: (products) {
@@ -129,13 +159,28 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
                   );
                 }
 
+                if (_isGridView) {
+                  return GridView.builder(
+                    padding: const EdgeInsets.fromLTRB(16, 4, 16, 20),
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      mainAxisSpacing: 12,
+                      crossAxisSpacing: 12,
+                      childAspectRatio: 0.72,
+                    ),
+                    itemCount: filtered.length,
+                    itemBuilder: (context, index) {
+                      return _buildGridProductCard(filtered[index]);
+                    },
+                  );
+                }
+
                 return ListView.separated(
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.fromLTRB(16, 4, 16, 20),
                   itemCount: filtered.length,
-                  separatorBuilder: (_, _) => const SizedBox(height: 12),
+                  separatorBuilder: (_, _) => const SizedBox(height: 10),
                   itemBuilder: (context, index) {
-                    final product = filtered[index];
-                    return _buildProductCard(product);
+                    return _buildListProductCard(filtered[index]);
                   },
                 );
               },
@@ -151,81 +196,114 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
     );
   }
 
-  Widget _buildProductCard(Product product) {
-    return Card(
-      color: AppColors.permukaan,
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
-        side: const BorderSide(color: AppColors.garis),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
+  // Kartu Grid 2 Kolom (Persis seperti "Product Feed" pada referensi gambar)
+  Widget _buildGridProductCard(Product product) {
+    return InkWell(
+      onTap: () => _openProductDialog(product),
+      borderRadius: BorderRadius.circular(18),
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(color: const Color(0xFFE2E8F0)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.03),
+              blurRadius: 8,
+              offset: const Offset(0, 3),
+            ),
+          ],
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: AppColors.kertas,
-                          borderRadius: BorderRadius.circular(4),
-                          border: Border.all(color: AppColors.garis),
-                        ),
-                        child: Text(
-                          product.code,
-                          style: const TextStyle(
-                            fontFamily: 'monospace',
-                            fontSize: 11,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.tinta,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 6),
-                      Text(
-                        product.name,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.tinta,
-                        ),
-                      ),
-                    ],
-                  ),
+            // Container Gambar / Ikon Produk ala Kartu E-Commerce/Feed
+            Container(
+              height: 90,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: AppColors.merahMuda,
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: Center(
+                child: Icon(
+                  Icons.inventory_2_outlined,
+                  size: 42,
+                  color: AppColors.merahSosro.withValues(alpha: 0.8),
                 ),
-                IconButton(
-                  tooltip: 'Edit Produk',
-                  icon: const Icon(Icons.edit_outlined, size: 20, color: AppColors.abuTinta),
-                  onPressed: () => _openProductDialog(product),
-                ),
-              ],
+              ),
             ),
-            const SizedBox(height: 12),
-            const Divider(height: 1, color: AppColors.garis),
-            const SizedBox(height: 12),
+            const SizedBox(height: 10),
 
-            // Spesifikasi Palet Grid
+            // Badge Kode Produk
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF1F5F9),
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: Text(
+                product.code,
+                style: const TextStyle(
+                  fontFamily: 'monospace',
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.merahSosro,
+                ),
+              ),
+            ),
+            const SizedBox(height: 4),
+
+            // Nama Produk
+            Text(
+              product.name,
+              style: const TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w700,
+                color: AppColors.tinta,
+                height: 1.2,
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+            const Spacer(),
+
+            // Kapasitas Palet & Tombol Edit
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _buildSpecItem(
-                  label: 'Susunan Palet',
-                  value: '${product.rowsPerPallet} baris × ${product.boxesPerRow} dus',
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '${product.boxesPerPallet} Dus',
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w800,
+                        color: AppColors.merahSosro,
+                      ),
+                    ),
+                    Text(
+                      '${product.rowsPerPallet}b × ${product.boxesPerRow}d',
+                      style: const TextStyle(
+                        fontSize: 10,
+                        color: Color(0xFF94A3B8),
+                      ),
+                    ),
+                  ],
                 ),
-                _buildSpecItem(
-                  label: 'Kapasitas Palet',
-                  value: '${product.boxesPerPallet} dus / palet',
-                  isBold: true,
-                ),
-                _buildSpecItem(
-                  label: 'Min. Stok',
-                  value: '${product.minStockBoxes} dus',
+                Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: AppColors.merahMuda,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.edit_outlined,
+                    size: 15,
+                    color: AppColors.merahSosro,
+                  ),
                 ),
               ],
             ),
@@ -235,28 +313,80 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
     );
   }
 
-  Widget _buildSpecItem({required String label, required String value, bool isBold = false}) {
-    return Expanded(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label,
-            style: const TextStyle(
-              fontSize: 11,
-              color: AppColors.abuTinta,
+  // Kartu List 1 Kolom (Opsional / Alternatif)
+  Widget _buildListProductCard(Product product) {
+    return InkWell(
+      onTap: () => _openProductDialog(product),
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: const Color(0xFFE2E8F0)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.02),
+              blurRadius: 6,
+              offset: const Offset(0, 2),
             ),
-          ),
-          const SizedBox(height: 2),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: 13,
-              fontWeight: isBold ? FontWeight.w700 : FontWeight.w600,
-              color: AppColors.tinta,
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: AppColors.merahMuda,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Icon(
+                Icons.inventory_2_outlined,
+                color: AppColors.merahSosro,
+                size: 26,
+              ),
             ),
-          ),
-        ],
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF1F5F9),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Text(
+                      product.code,
+                      style: const TextStyle(
+                        fontFamily: 'monospace',
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.merahSosro,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 3),
+                  Text(
+                    product.name,
+                    style: const TextStyle(
+                      fontSize: 13.5,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.tinta,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    'Kapasitas: ${product.boxesPerPallet} dus (${product.rowsPerPallet} baris × ${product.boxesPerRow} dus)',
+                    style: const TextStyle(fontSize: 11, color: Color(0xFF94A3B8)),
+                  ),
+                ],
+              ),
+            ),
+            const Icon(Icons.arrow_forward_ios_rounded, size: 14, color: Color(0xFF94A3B8)),
+          ],
+        ),
       ),
     );
   }
