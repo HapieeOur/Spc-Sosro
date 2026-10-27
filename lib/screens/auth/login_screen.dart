@@ -6,7 +6,7 @@ import 'package:spc_sosro/core/utils/validators.dart';
 import 'package:spc_sosro/providers/auth_provider.dart';
 import 'package:spc_sosro/widgets/app_button.dart';
 import 'package:spc_sosro/widgets/app_text_field.dart';
-import 'package:spc_sosro/widgets/slat_pattern.dart';
+import 'package:spc_sosro/widgets/fluid_background.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -170,198 +170,248 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     }
 
     return Scaffold(
-      backgroundColor: AppColors.daunTua,
-      body: SafeArea(
-        bottom: false,
-        child: Column(
-          children: [
-            // Top Half: SlatPattern Hero with 3 pallet blocks and brand wordmark
-            SlatHeaderBackground(
-              height: 200,
+      backgroundColor: const Color(0xFF4A080A),
+      body: Column(
+        children: [
+          // Top Header: Fluid Wave & 3D Spheres Background
+          FluidSphereBackground(
+            height: 220,
+            child: SafeArea(
+              bottom: false,
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                       decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(8),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.15),
-                            blurRadius: 6,
-                            offset: const Offset(0, 2),
+                        color: Colors.white.withValues(alpha: 0.16),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: Colors.white.withValues(alpha: 0.25),
+                        ),
+                      ),
+                      child: const Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.warehouse_rounded,
+                            size: 13,
+                            color: Colors.white,
+                          ),
+                          SizedBox(width: 6),
+                          Text(
+                            'WMS PALLET COUNTER',
+                            style: TextStyle(
+                              fontFamily: 'BarlowSemiCondensed',
+                              fontSize: 11,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.white,
+                              letterSpacing: 1.2,
+                            ),
                           ),
                         ],
-                      ),
-                      child: Image.asset(
-                        'assets/images/sosro_logo_cropped.png',
-                        height: 36,
-                        fit: BoxFit.contain,
                       ),
                     ),
                     const SizedBox(height: 10),
                     const Text(
-                      'SPC Pallet Counter',
+                      'PT Sinar Sosro',
                       style: TextStyle(
                         fontFamily: 'BarlowSemiCondensed',
                         fontSize: 26,
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w800,
                         color: Colors.white,
-                        letterSpacing: -0.3,
+                        letterSpacing: -0.2,
                       ),
                     ),
-                    const Text(
-                      'Sistem Pencatatan Stok Gudang',
+                    Text(
+                      'Pusat Distribusi & Kontrol Stok Palet',
                       style: TextStyle(
                         fontSize: 13,
-                        color: AppColors.merahMuda,
+                        color: Colors.white.withValues(alpha: 0.85),
                       ),
                     ),
                   ],
                 ),
               ),
             ),
+          ),
 
-            // Bottom Sheet: White surface with 20dp top rounded corners
-            Expanded(
-              child: Container(
-                width: double.infinity,
-                decoration: const BoxDecoration(
-                  color: AppColors.permukaan,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(20),
-                    topRight: Radius.circular(20),
-                  ),
+          // Bottom Sheet: White surface with 32dp top rounded corners
+          Expanded(
+            child: Container(
+              width: double.infinity,
+              decoration: const BoxDecoration(
+                color: AppColors.permukaan,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(32),
+                  topRight: Radius.circular(32),
                 ),
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.fromLTRB(24, 28, 24, 32),
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Masuk untuk mencatat stok gudang.',
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w400,
-                            color: AppColors.abuTinta,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black12,
+                    blurRadius: 16,
+                    offset: Offset(0, -4),
+                  ),
+                ],
+              ),
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(24, 28, 24, 32),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Sosro Brand Logo (Direct transparent integration, no box container!)
+                      Image.asset(
+                        'assets/images/sosro_logo_transparent.png',
+                        height: 38,
+                        fit: BoxFit.contain,
+                      ),
+                      const SizedBox(height: 14),
+
+                      const Text(
+                        'Masuk ke Akun',
+                        style: TextStyle(
+                          fontFamily: 'BarlowSemiCondensed',
+                          fontSize: 24,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.tinta,
+                          letterSpacing: -0.2,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+
+                      const Text(
+                        'Silakan masuk untuk mencatat dan memantau stok gudang.',
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: AppColors.abuTinta,
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+
+                      if (errorMessage != null) ...[
+                        Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: AppColors.bataMuda,
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(
+                              color: AppColors.bata.withValues(alpha: 0.3),
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              const Icon(
+                                Icons.error_outline_rounded,
+                                size: 20,
+                                color: AppColors.bata,
+                              ),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: Text(
+                                  errorMessage,
+                                  style: const TextStyle(
+                                    fontSize: 13,
+                                    color: AppColors.bata,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                        const SizedBox(height: 24),
+                        const SizedBox(height: 16),
+                      ],
 
-                        if (errorMessage != null) ...[
-                          Container(
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              color: AppColors.bataMuda,
-                              borderRadius: BorderRadius.circular(6),
-                              border: Border.all(color: AppColors.bata.withValues(alpha: 0.3)),
-                            ),
-                            child: Row(
+                      AppTextField(
+                        controller: _emailController,
+                        label: 'Email',
+                        hint: 'nama@sosro.com',
+                        prefixIcon: const Icon(
+                          Icons.email_outlined,
+                          size: 20,
+                          color: AppColors.abuTinta,
+                        ),
+                        keyboardType: TextInputType.emailAddress,
+                        validator: Validators.validateEmail,
+                      ),
+                      const SizedBox(height: 16),
+
+                      AppTextField(
+                        controller: _passwordController,
+                        label: 'Kata Sandi',
+                        hint: 'Masukkan kata sandi',
+                        prefixIcon: const Icon(
+                          Icons.lock_outline,
+                          size: 20,
+                          color: AppColors.abuTinta,
+                        ),
+                        obscureText: _obscurePassword,
+                        validator: Validators.validatePassword,
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _obscurePassword
+                                ? Icons.visibility_outlined
+                                : Icons.visibility_off_outlined,
+                            size: 20,
+                            color: AppColors.abuTinta,
+                          ),
+                          tooltip: _obscurePassword
+                              ? 'Tampilkan kata sandi'
+                              : 'Sembunyikan kata sandi',
+                          onPressed: () {
+                            setState(() {
+                              _obscurePassword = !_obscurePassword;
+                            });
+                          },
+                        ),
+                      ),
+                      const SizedBox(height: 28),
+
+                      AppButton(
+                        text: 'Masuk',
+                        isLoading: isLoading,
+                        onPressed: _submit,
+                      ),
+                      const SizedBox(height: 20),
+
+                      Center(
+                        child: TextButton(
+                          onPressed: () {
+                            ref.read(authControllerProvider.notifier).clearError();
+                            context.go('/register');
+                          },
+                          child: const Text.rich(
+                            TextSpan(
+                              text: 'Belum punya akun? ',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: AppColors.abuTinta,
+                              ),
                               children: [
-                                const Icon(
-                                  Icons.error_outline_rounded,
-                                  size: 20,
-                                  color: AppColors.bata,
-                                ),
-                                const SizedBox(width: 10),
-                                Expanded(
-                                  child: Text(
-                                    errorMessage,
-                                    style: const TextStyle(
-                                      fontSize: 13,
-                                      color: AppColors.bata,
-                                      fontWeight: FontWeight.w500,
-                                    ),
+                                TextSpan(
+                                  text: 'Daftar Operator',
+                                  style: TextStyle(
+                                    color: AppColors.merahSosro,
+                                    fontWeight: FontWeight.w700,
                                   ),
                                 ),
                               ],
                             ),
                           ),
-                          const SizedBox(height: 16),
-                        ],
-
-                        AppTextField(
-                          controller: _emailController,
-                          label: 'Email',
-                          hint: 'nama@sosro.com',
-                          keyboardType: TextInputType.emailAddress,
-                          validator: Validators.validateEmail,
                         ),
-                        const SizedBox(height: 16),
-
-                        AppTextField(
-                          controller: _passwordController,
-                          label: 'Kata sandi',
-                          hint: 'Masukkan kata sandi',
-                          obscureText: _obscurePassword,
-                          validator: Validators.validatePassword,
-                          suffixIcon: IconButton(
-                            icon: Icon(
-                              _obscurePassword
-                                  ? Icons.visibility_outlined
-                                  : Icons.visibility_off_outlined,
-                              size: 20,
-                              color: AppColors.abuTinta,
-                            ),
-                            tooltip: _obscurePassword
-                                ? 'Tampilkan kata sandi'
-                                : 'Sembunyikan kata sandi',
-                            onPressed: () {
-                              setState(() {
-                                _obscurePassword = !_obscurePassword;
-                              });
-                            },
-                          ),
-                        ),
-                        const SizedBox(height: 28),
-
-                        AppButton(
-                          text: 'Masuk',
-                          isLoading: isLoading,
-                          onPressed: _submit,
-                        ),
-                        const SizedBox(height: 20),
-
-                        Center(
-                          child: TextButton(
-                            onPressed: () {
-                              ref.read(authControllerProvider.notifier).clearError();
-                              context.go('/register');
-                            },
-                            child: const Text.rich(
-                              TextSpan(
-                                text: 'Belum punya akun? ',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: AppColors.abuTinta,
-                                ),
-                                children: [
-                                  TextSpan(
-                                    text: 'Daftar Operator',
-                                    style: TextStyle(
-                                      color: AppColors.daun,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
