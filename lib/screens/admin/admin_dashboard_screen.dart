@@ -14,8 +14,6 @@ import 'package:spc_sosro/screens/admin/users_screen.dart';
 import 'package:spc_sosro/widgets/app_button.dart';
 import 'package:spc_sosro/widgets/error_view.dart';
 import 'package:spc_sosro/widgets/loading_view.dart';
-import 'package:spc_sosro/widgets/slat_pattern.dart';
-import 'package:spc_sosro/widgets/stat_card.dart';
 
 class AdminDashboardScreen extends ConsumerWidget {
   const AdminDashboardScreen({super.key});
@@ -32,9 +30,8 @@ class AdminDashboardScreen extends ConsumerWidget {
     );
 
     return Scaffold(
-      backgroundColor: AppColors.kertas,
+      backgroundColor: const Color(0xFFF4F6FA),
       body: SafeArea(
-        top: false,
         child: RefreshIndicator(
           color: AppColors.merahSosro,
           onRefresh: () async {
@@ -43,181 +40,280 @@ class AdminDashboardScreen extends ConsumerWidget {
           },
           child: SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
+            padding: const EdgeInsets.fromLTRB(18, 16, 18, 28),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Header Hero Sosro Merah Tua Gradasi
-                SlatHeaderBackground(
-                  height: 200,
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 44, 20, 20),
-                    child: Column(
+                // 1. Top Header Bar (Modern Clean Bar)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Row(
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(4),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black.withValues(alpha: 0.1),
-                                        blurRadius: 4,
-                                      ),
-                                    ],
-                                  ),
-                                  child: Image.asset(
-                                    'assets/images/sosro_logo_cropped.png',
-                                    height: 16,
-                                    fit: BoxFit.contain,
-                                  ),
-                                ),
-                                const SizedBox(width: 8),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                                  decoration: BoxDecoration(
-                                    color: AppColors.merahMuda,
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
-                                  child: const Text(
-                                    'ADMINISTRATOR',
-                                    style: TextStyle(
-                                      fontSize: 10,
-                                      fontWeight: FontWeight.w800,
-                                      color: AppColors.merahTua,
-                                      letterSpacing: 0.5,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                               decoration: BoxDecoration(
-                                color: Colors.white.withValues(alpha: 0.15),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  const Icon(Icons.calendar_today, size: 11, color: Colors.white),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    DateFormatter.formatDate(DateTime.now()),
-                                    style: const TextStyle(
-                                      fontSize: 11,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w500,
-                                    ),
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(color: const Color(0xFFE2E8F0)),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withValues(alpha: 0.03),
+                                    blurRadius: 4,
+                                    offset: const Offset(0, 2),
                                   ),
                                 ],
                               ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 10),
-                        Text(
-                          'Halo, ${profile?.fullName ?? "Administrator"}',
-                          style: const TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.white,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        const SizedBox(height: 2),
-                        Row(
-                          children: [
-                            Container(
-                              width: 6,
-                              height: 6,
-                              decoration: const BoxDecoration(
-                                color: AppColors.daun,
-                                shape: BoxShape.circle,
+                              child: Image.asset(
+                                'assets/images/sosro_logo_cropped.png',
+                                height: 18,
+                                fit: BoxFit.contain,
                               ),
                             ),
-                            const SizedBox(width: 6),
+                            const SizedBox(width: 8),
                             const Text(
-                              'Pusat Kontrol Tally & Inventori Pergudangan',
+                              'SPC Pallet Counter',
                               style: TextStyle(
-                                fontSize: 12,
-                                color: AppColors.merahMuda,
-                                fontWeight: FontWeight.w400,
+                                fontSize: 13,
+                                fontWeight: FontWeight.w700,
+                                color: AppColors.abuTinta,
+                                letterSpacing: 0.2,
                               ),
                             ),
                           ],
+                        ),
+                        const SizedBox(height: 6),
+                        const Text(
+                          'Dashboard',
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.w800,
+                            color: AppColors.tinta,
+                            letterSpacing: -0.4,
+                          ),
                         ),
                       ],
                     ),
-                  ),
-                ),
 
-                Padding(
+                    // Tombol Refresh / Notifikasi
+                    InkWell(
+                      onTap: () {
+                        ref.invalidate(dashboardProvider);
+                        ref.invalidate(allProfilesProvider);
+                      },
+                      borderRadius: BorderRadius.circular(12),
+                      child: Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: const Color(0xFFE2E8F0)),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.03),
+                              blurRadius: 6,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: const Icon(
+                          Icons.refresh_rounded,
+                          color: AppColors.tinta,
+                          size: 20,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+
+                // 2. Greeting Card (seperti "Your greeting!" pada referensi gambar)
+                Container(
                   padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: const Color(0xFFE2E8F0)),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.04),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Row(
                     children: [
-                      // Banner Antrean ACC Operator
-                      if (pendingCount > 0) ...[
-                        InkWell(
-                          onTap: () => context.go('/admin/users'),
-                          borderRadius: BorderRadius.circular(10),
-                          child: Container(
-                            padding: const EdgeInsets.all(14),
-                            decoration: BoxDecoration(
-                              color: AppColors.kuningMarkaMuda,
-                              borderRadius: BorderRadius.circular(10),
-                              border: Border.all(color: AppColors.kuningMarka.withValues(alpha: 0.5)),
-                            ),
-                            child: Row(
-                              children: [
-                                const Icon(Icons.person_add_alt_1, color: AppColors.teksPeringatan, size: 24),
-                                const SizedBox(width: 12),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        '$pendingCount Operator Menunggu ACC',
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.w700,
-                                          fontSize: 14,
-                                          color: AppColors.teksPeringatan,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 2),
-                                      const Text(
-                                        'Ketuk untuk melihat dan menyetujui akun baru.',
-                                        style: TextStyle(fontSize: 12, color: AppColors.teksPeringatan),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                const Icon(Icons.arrow_forward_ios, size: 14, color: AppColors.teksPeringatan),
-                              ],
-                            ),
+                      CircleAvatar(
+                        radius: 24,
+                        backgroundColor: AppColors.merahMuda,
+                        child: Text(
+                          (profile?.fullName.isNotEmpty ?? false)
+                              ? profile!.fullName[0].toUpperCase()
+                              : 'A',
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w800,
+                            color: AppColors.merahSosro,
                           ),
                         ),
-                        const SizedBox(height: 16),
-                      ],
-
-                      // Konten Dinamis Berdasarkan Data
-                      dashboardAsync.when(
-                        data: (data) => _buildDashboardContent(context, ref, data),
-                        loading: () => const LoadingView(message: 'Memuat data analitik stok...'),
-                        error: (err, _) => ErrorView(
-                          message: err.toString(),
-                          onRetry: () => ref.invalidate(dashboardProvider),
+                      ),
+                      const SizedBox(width: 14),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Selamat Bertugas,',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: AppColors.abuTinta,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            Text(
+                              profile?.fullName ?? 'Administrator Gudang',
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
+                                color: AppColors.tinta,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            const SizedBox(height: 4),
+                            Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.merahMuda,
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  child: const Text(
+                                    'Admin Gudang',
+                                    style: TextStyle(
+                                      fontSize: 10.5,
+                                      fontWeight: FontWeight.w700,
+                                      color: AppColors.merahTua,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 6),
+                                Text(
+                                  DateFormatter.formatDate(DateTime.now()),
+                                  style: const TextStyle(
+                                    fontSize: 11,
+                                    color: AppColors.abuTinta,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF1F5F9),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: const Icon(
+                          Icons.warehouse_outlined,
+                          size: 20,
+                          color: AppColors.merahSosro,
                         ),
                       ),
                     ],
+                  ),
+                ),
+                const SizedBox(height: 16),
+
+                // 3. Banner Antrean ACC Operator (Jika Ada Akun Baru)
+                if (pendingCount > 0) ...[
+                  InkWell(
+                    onTap: () => context.go('/admin/users'),
+                    borderRadius: BorderRadius.circular(16),
+                    child: Container(
+                      padding: const EdgeInsets.all(14),
+                      decoration: BoxDecoration(
+                        color: AppColors.kuningMarkaMuda,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: AppColors.kuningMarka.withValues(alpha: 0.4)),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.amber.withValues(alpha: 0.08),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: AppColors.kuningMarka.withValues(alpha: 0.15),
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(
+                              Icons.hourglass_top_rounded,
+                              color: AppColors.teksPeringatan,
+                              size: 20,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  '$pendingCount Akun Operator Menunggu ACC',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 13.5,
+                                    color: AppColors.teksPeringatan,
+                                  ),
+                                ),
+                                const SizedBox(height: 2),
+                                const Text(
+                                  'Ketuk untuk memeriksa dan menyetujui akun operator baru.',
+                                  style: TextStyle(
+                                    fontSize: 11.5,
+                                    color: AppColors.teksPeringatan,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const Icon(
+                            Icons.arrow_forward_ios_rounded,
+                            size: 14,
+                            color: AppColors.teksPeringatan,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                ],
+
+                // 4. Konten Dinamis Data Dashboard
+                dashboardAsync.when(
+                  data: (data) => _buildModernDashboardContent(context, ref, data, pendingCount),
+                  loading: () => const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 40),
+                    child: LoadingView(message: 'Memuat data analitik stok...'),
+                  ),
+                  error: (err, _) => Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 24),
+                    child: ErrorView(
+                      message: err.toString(),
+                      onRetry: () => ref.invalidate(dashboardProvider),
+                    ),
                   ),
                 ),
               ],
@@ -228,7 +324,12 @@ class AdminDashboardScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildDashboardContent(BuildContext context, WidgetRef ref, DashboardData data) {
+  Widget _buildModernDashboardContent(
+    BuildContext context,
+    WidgetRef ref,
+    DashboardData data,
+    int pendingCount,
+  ) {
     final totalPallets = data.stockByProduct.fold<int>(0, (sum, item) => sum + item.fullPallets);
     final totalBoxes = data.stockByProduct.fold<int>(0, (sum, item) => sum + item.stockBoxes);
     final isBrandNew = data.stockByProduct.isEmpty;
@@ -236,260 +337,147 @@ class AdminDashboardScreen extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // 1. Ringkasan Status Gudang Cepat (KPI Overview Bar)
-        Container(
-          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 14),
-          decoration: BoxDecoration(
-            color: AppColors.permukaan,
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: AppColors.garis),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.03),
-                blurRadius: 4,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          child: Row(
-            children: [
-              _buildMiniOverviewItem(
-                label: 'SKU Terdaftar',
-                value: '${data.stockByProduct.length}',
-                unit: 'Produk',
-                color: AppColors.merahSosro,
-                icon: Icons.inventory_2_outlined,
-              ),
-              Container(width: 1, height: 32, color: AppColors.garis),
-              _buildMiniOverviewItem(
-                label: 'Palet di Gudang',
-                value: NumberFormatter.formatNumber(totalPallets),
-                unit: 'Palet Utuh',
-                color: AppColors.biruTruk,
-                icon: Icons.grid_view_rounded,
-              ),
-              Container(width: 1, height: 32, color: AppColors.garis),
-              _buildMiniOverviewItem(
-                label: 'Total Stok Fisik',
-                value: NumberFormatter.formatNumber(totalBoxes),
-                unit: 'Dus',
-                color: AppColors.daun,
-                icon: Icons.inventory_outlined,
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(height: 16),
-
-        // 2. Panduan Memulai (Muncul jika produk masih kosong agar tidak membingungkan)
-        if (isBrandNew) ...[
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  AppColors.merahMuda,
-                  Colors.white,
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: AppColors.merahSosro.withValues(alpha: 0.2)),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: AppColors.merahSosro.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: const Icon(Icons.rocket_launch_rounded, color: AppColors.merahSosro, size: 20),
-                    ),
-                    const SizedBox(width: 10),
-                    const Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Inisialisasi Operasional Gudang',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w700,
-                              color: AppColors.merahTua,
-                            ),
-                          ),
-                          Text(
-                            'Ikuti 3 langkah awal ini untuk memulai sistem tally:',
-                            style: TextStyle(fontSize: 11, color: AppColors.abuTinta),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 14),
-                _buildGuideStep(
-                  step: '1',
-                  title: 'Tambahkan Master Produk',
-                  desc: 'Daftarkan nama produk dan konfigurasi rasio dus per palet.',
-                  buttonText: '+ Tambah Produk',
-                  onTap: () => context.go('/admin/products'),
-                ),
-                const SizedBox(height: 10),
-                _buildGuideStep(
-                  step: '2',
-                  title: 'Masukkan Saldo Awal Opname',
-                  desc: 'Input stok fisik awal gudang agar kalkulasi mutasi mulai berjalan.',
-                  buttonText: 'Atur Saldo',
-                  onTap: () => context.go('/admin/settings'),
-                ),
-                const SizedBox(height: 10),
-                _buildGuideStep(
-                  step: '3',
-                  title: 'Verifikasi Petugas Operator',
-                  desc: 'Beri persetujuan (ACC) akun operator yang akan mencatat tally.',
-                  buttonText: 'Cek User',
-                  onTap: () => context.go('/admin/users'),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 20),
-        ],
-
-        // 3. Tombol Aksi Pintasan Administrasi
-        const Text(
-          'Menu Pintasan Administrasi',
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w700,
-            color: AppColors.tinta,
-          ),
-        ),
-        const SizedBox(height: 10),
+        // 1. Grid 2x2 Metric Cards (Gaya Taktil Modern dengan Squircle Icon Badge)
         Row(
           children: [
             Expanded(
-              child: _buildQuickButton(
-                icon: Icons.people_outline,
-                label: 'Kelola User',
-                color: AppColors.merahSosro,
-                onTap: () => context.go('/admin/users'),
-              ),
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: _buildQuickButton(
-                icon: Icons.inventory_2_outlined,
-                label: 'Master Produk',
-                color: AppColors.biruTruk,
-                onTap: () => context.go('/admin/products'),
-              ),
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: _buildQuickButton(
-                icon: Icons.receipt_long_outlined,
-                label: 'Transaksi',
-                color: AppColors.tinta,
-                onTap: () => context.go('/admin/transactions'),
-              ),
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: _buildQuickButton(
-                icon: Icons.bar_chart_outlined,
-                label: 'Laporan',
-                color: AppColors.daun,
-                onTap: () => context.go('/admin/reports'),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        Row(
-          children: [
-            Expanded(
-              child: _buildQuickButton(
-                icon: Icons.account_balance_wallet_outlined,
-                label: 'Saldo Awal',
-                color: AppColors.biruTruk,
-                onTap: () => context.go('/admin/settings'),
-              ),
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: _buildQuickButton(
-                icon: Icons.edit_note_outlined,
-                label: 'Koreksi Data',
-                color: AppColors.kuningMarka,
-                onTap: () => context.go('/admin/corrections'),
-              ),
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: _buildQuickButton(
-                icon: Icons.history_rounded,
-                label: 'Log Audit',
-                color: AppColors.abuTinta,
-                onTap: () => context.go('/admin/activity'),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 20),
-
-        // 4. Aktivitas Tally Hari Ini
-        const Text(
-          'Mutasi Tally Hari Ini (WIB)',
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w700,
-            color: AppColors.tinta,
-          ),
-        ),
-        const SizedBox(height: 10),
-        Row(
-          children: [
-            Expanded(
-              child: StatCard(
+              child: _buildTactileCard(
                 label: 'Barang Masuk',
-                value: NumberFormatter.formatNumber(data.todayInBoxes),
-                subtitle: '${NumberFormatter.formatDecimal(data.todayInPalletEquivalent)} palet',
-                color: AppColors.daun,
+                value: '${NumberFormatter.formatNumber(data.todayInBoxes)} Dus',
+                subtitle: '≈ ${NumberFormatter.formatDecimal(data.todayInPalletEquivalent)} Palet',
                 icon: Icons.south_west_rounded,
+                iconColor: const Color(0xFF15803D),
+                iconBgColor: const Color(0xFFDCFCE7),
               ),
             ),
             const SizedBox(width: 12),
             Expanded(
-              child: StatCard(
+              child: _buildTactileCard(
                 label: 'Barang Keluar',
-                value: NumberFormatter.formatNumber(data.todayOutBoxes),
-                subtitle: '${NumberFormatter.formatDecimal(data.todayOutPalletEquivalent)} palet',
-                color: AppColors.biruTruk,
+                value: '${NumberFormatter.formatNumber(data.todayOutBoxes)} Dus',
+                subtitle: '≈ ${NumberFormatter.formatDecimal(data.todayOutPalletEquivalent)} Palet',
                 icon: Icons.north_east_rounded,
+                iconColor: AppColors.merahSosro,
+                iconBgColor: const Color(0xFFFEE2E2),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        Row(
+          children: [
+            Expanded(
+              child: _buildTactileCard(
+                label: 'Stok Fisik Gudang',
+                value: '${NumberFormatter.formatNumber(totalBoxes)} Dus',
+                subtitle: '${NumberFormatter.formatNumber(totalPallets)} Palet Utuh',
+                icon: Icons.inventory_2_outlined,
+                iconColor: AppColors.biruTruk,
+                iconBgColor: const Color(0xFFDBEAFE),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: _buildTactileCard(
+                label: 'Antrean ACC',
+                value: '$pendingCount Akun',
+                subtitle: pendingCount > 0 ? 'Perlu ACC Admin' : 'Semua Terverifikasi',
+                icon: Icons.people_alt_outlined,
+                iconColor: const Color(0xFFD97706),
+                iconBgColor: const Color(0xFFFEF3C7),
+                onTap: () => context.go('/admin/users'),
               ),
             ),
           ],
         ),
         const SizedBox(height: 20),
 
-        // 5. Grafik Tren 7 Hari Terakhir
-        _buildTrendChart(data.sevenDayTrend),
+        // 2. Analytics Card (Gaya Layar "analytics" pada referensi)
+        _buildAnalyticsCard(data.sevenDayTrend),
         const SizedBox(height: 20),
 
-        // 6. Peringatan Stok Menipis (jika ada)
+        // 3. Quick Action Grid (Gaya 4 Kartu "Quick Action" pada referensi)
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text(
+              'Aksi Cepat',
+              style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w700,
+                color: AppColors.tinta,
+              ),
+            ),
+            InkWell(
+              onTap: () => context.go('/admin/transactions'),
+              child: const Text(
+                'Lihat Riwayat >',
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.merahSosro,
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 10),
+        Row(
+          children: [
+            Expanded(
+              child: _buildActionTile(
+                icon: Icons.receipt_long_outlined,
+                label: 'Transaksi',
+                subtitle: 'Pencatatan',
+                tintColor: AppColors.merahSosro,
+                tintBg: const Color(0xFFFEE2E2),
+                onTap: () => context.go('/admin/transactions'),
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: _buildActionTile(
+                icon: Icons.inventory_2_outlined,
+                label: 'Produk',
+                subtitle: 'Master SKU',
+                tintColor: AppColors.biruTruk,
+                tintBg: const Color(0xFFDBEAFE),
+                onTap: () => context.go('/admin/products'),
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: _buildActionTile(
+                icon: Icons.bar_chart_outlined,
+                label: 'Laporan',
+                subtitle: 'PDF & CSV',
+                tintColor: const Color(0xFF15803D),
+                tintBg: const Color(0xFFDCFCE7),
+                onTap: () => context.go('/admin/reports'),
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: _buildActionTile(
+                icon: Icons.people_outline_rounded,
+                label: 'Pengguna',
+                subtitle: 'ACC Operator',
+                tintColor: const Color(0xFFD97706),
+                tintBg: const Color(0xFFFEF3C7),
+                onTap: () => context.go('/admin/users'),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 22),
+
+        // 4. Peringatan Stok Menipis (Jika Ada)
         if (data.lowStock.isNotEmpty) ...[
           Container(
-            padding: const EdgeInsets.all(14),
+            padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: AppColors.kuningMarkaMuda,
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(18),
               border: Border.all(color: AppColors.kuningMarka.withValues(alpha: 0.4)),
             ),
             child: Column(
@@ -500,9 +488,9 @@ class AdminDashboardScreen extends ConsumerWidget {
                     const Icon(Icons.warning_amber_rounded, color: AppColors.teksPeringatan, size: 20),
                     const SizedBox(width: 8),
                     Text(
-                      'Peringatan: ${data.lowStock.length} Produk Menipis',
+                      'Peringatan: ${data.lowStock.length} Varian Stok Menipis',
                       style: const TextStyle(
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w700,
                         fontSize: 13,
                         color: AppColors.teksPeringatan,
                       ),
@@ -514,7 +502,7 @@ class AdminDashboardScreen extends ConsumerWidget {
                   return Padding(
                     padding: const EdgeInsets.only(top: 4),
                     child: Text(
-                      '• ${item.name}: sisa ${NumberFormatter.formatNumber(item.stockBoxes)} dus (Batas Min: ${NumberFormatter.formatNumber(item.minStockBoxes)} dus)',
+                      '• ${item.name}: sisa ${NumberFormatter.formatNumber(item.stockBoxes)} dus (Batas Minimum: ${NumberFormatter.formatNumber(item.minStockBoxes)} dus)',
                       style: const TextStyle(fontSize: 12, color: AppColors.teksPeringatan),
                     ),
                   );
@@ -525,14 +513,14 @@ class AdminDashboardScreen extends ConsumerWidget {
           const SizedBox(height: 20),
         ],
 
-        // 7. Stok Fisik Gudang Saat Ini
+        // 5. Ringkasan Stok Produk (Gaya "Product Feed" pada referensi)
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             const Text(
-              'Stok Fisik Gudang Saat Ini',
+              'Stok Produk Gudang',
               style: TextStyle(
-                fontSize: 14,
+                fontSize: 15,
                 fontWeight: FontWeight.w700,
                 color: AppColors.tinta,
               ),
@@ -556,15 +544,15 @@ class AdminDashboardScreen extends ConsumerWidget {
           Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: AppColors.permukaan,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: AppColors.garis),
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(18),
+              border: Border.all(color: const Color(0xFFE2E8F0)),
             ),
             child: Column(
               children: [
                 Container(
                   padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     color: AppColors.merahMuda,
                     shape: BoxShape.circle,
                   ),
@@ -581,7 +569,7 @@ class AdminDashboardScreen extends ConsumerWidget {
                 ),
                 const SizedBox(height: 4),
                 const Text(
-                  'Tambahkan master produk Sosro untuk mulai memantau tumpukan palet dan stok fisik gudang.',
+                  'Tambahkan master produk Sosro untuk mulai memantau tumpukan palet dan mutasi gudang.',
                   style: TextStyle(fontSize: 12, color: AppColors.abuTinta),
                   textAlign: TextAlign.center,
                 ),
@@ -589,7 +577,7 @@ class AdminDashboardScreen extends ConsumerWidget {
                 SizedBox(
                   width: 200,
                   child: AppButton(
-                    text: 'Tambah Produk Sekarang',
+                    text: 'Tambah Produk',
                     icon: Icons.add,
                     onPressed: () => context.go('/admin/products'),
                   ),
@@ -598,17 +586,17 @@ class AdminDashboardScreen extends ConsumerWidget {
             ),
           )
         else
-          ...data.stockByProduct.map((summary) => _buildStockCard(summary)),
+          ...data.stockByProduct.take(5).map((summary) => _buildModernStockCard(summary)),
         const SizedBox(height: 20),
 
-        // 8. Log Aktivitas Sistem Terkini
+        // 6. Aktivitas Sistem Terkini (Gaya "Project Feed" pada referensi)
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             const Text(
-              'Aktivitas Sistem Terkini',
+              'Aktivitas Terkini',
               style: TextStyle(
-                fontSize: 14,
+                fontSize: 15,
                 fontWeight: FontWeight.w700,
                 color: AppColors.tinta,
               ),
@@ -632,186 +620,108 @@ class AdminDashboardScreen extends ConsumerWidget {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: AppColors.permukaan,
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: AppColors.garis),
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: const Color(0xFFE2E8F0)),
             ),
-            child: Row(
+            child: const Row(
               children: [
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: AppColors.daun.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: const Icon(Icons.verified_outlined, color: AppColors.daun, size: 20),
-                ),
-                const SizedBox(width: 12),
-                const Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Audit Trail Aktif',
-                        style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.tinta),
-                      ),
-                      Text(
-                        'Seluruh transaksi dan perubahan data akan otomatis tercatat di sini.',
-                        style: TextStyle(fontSize: 11, color: AppColors.abuTinta),
-                      ),
-                    ],
+                Icon(Icons.verified_outlined, color: Color(0xFF15803D), size: 20),
+                SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    'Audit trail aktif: setiap mutasi transaksi dan persetujuan akun akan tercatat di sini.',
+                    style: TextStyle(fontSize: 11.5, color: AppColors.abuTinta),
                   ),
                 ),
               ],
             ),
           )
         else
-          ...data.recentActivity.take(4).map((activity) => _buildRecentActivityItem(activity)),
-        const SizedBox(height: 24),
-
-        // 9. Kartu Standar Operasional Gudang (SOP Tally Sosro)
-        Container(
-          padding: const EdgeInsets.all(14),
-          decoration: BoxDecoration(
-            color: AppColors.permukaan,
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: AppColors.garis),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  const Icon(Icons.info_outline, size: 16, color: AppColors.merahSosro),
-                  const SizedBox(width: 6),
-                  const Text(
-                    'Pedoman Tally SPC Sosro',
-                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: AppColors.tinta),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 6),
-              const Text(
-                '• Gunakan palet standar 100 x 120 cm dengan batas tumpukan aman sesuai spesifikasi SKU.\n'
-                '• Transaksi yang keliru dicatat wajib dibatalkan melalui menu Semua Transaksi dengan alasan resmi.\n'
-                '• Tutup shift harian dengan memeriksa rekap laporan mutasi stok dan mencetak salinan PDF.',
-                style: TextStyle(fontSize: 11, color: AppColors.abuTinta, height: 1.4),
-              ),
-            ],
-          ),
-        ),
+          ...data.recentActivity.take(4).map((activity) => _buildModernActivityItem(activity)),
       ],
     );
   }
 
-  Widget _buildMiniOverviewItem({
+  // Komponen Kartu Metrik Taktil (2x2 Grid)
+  Widget _buildTactileCard({
     required String label,
     required String value,
-    required String unit,
-    required Color color,
+    required String subtitle,
     required IconData icon,
+    required Color iconColor,
+    required Color iconBgColor,
+    VoidCallback? onTap,
   }) {
-    return Expanded(
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(icon, size: 13, color: color),
-              const SizedBox(width: 4),
-              Text(
-                value,
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w800,
-                  color: color,
-                ),
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(18),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(color: const Color(0xFFE2E8F0)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.03),
+              blurRadius: 8,
+              offset: const Offset(0, 3),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(9),
+              decoration: BoxDecoration(
+                color: iconBgColor,
+                borderRadius: BorderRadius.circular(12),
               ),
-            ],
-          ),
-          const SizedBox(height: 2),
-          Text(
-            label,
-            style: const TextStyle(
-              fontSize: 10,
-              fontWeight: FontWeight.w600,
-              color: AppColors.tinta,
+              child: Icon(icon, size: 20, color: iconColor),
             ),
-            textAlign: TextAlign.center,
-          ),
-          Text(
-            unit,
-            style: const TextStyle(
-              fontSize: 9,
-              color: AppColors.abuTinta,
+            const SizedBox(height: 12),
+            Text(
+              value,
+              style: const TextStyle(
+                fontSize: 17,
+                fontWeight: FontWeight.w800,
+                color: AppColors.tinta,
+                letterSpacing: -0.3,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
-            textAlign: TextAlign.center,
-          ),
-        ],
+            const SizedBox(height: 2),
+            Text(
+              label,
+              style: const TextStyle(
+                fontSize: 11.5,
+                fontWeight: FontWeight.w600,
+                color: AppColors.abuTinta,
+              ),
+            ),
+            Text(
+              subtitle,
+              style: const TextStyle(
+                fontSize: 10.5,
+                color: Color(0xFF94A3B8),
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildGuideStep({
-    required String step,
-    required String title,
-    required String desc,
-    required String buttonText,
-    required VoidCallback onTap,
-  }) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        CircleAvatar(
-          radius: 10,
-          backgroundColor: AppColors.merahSosro,
-          child: Text(
-            step,
-            style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
-          ),
-        ),
-        const SizedBox(width: 10),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: AppColors.tinta),
-              ),
-              Text(
-                desc,
-                style: const TextStyle(fontSize: 11, color: AppColors.abuTinta),
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(width: 8),
-        InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(6),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-            decoration: BoxDecoration(
-              color: AppColors.merahSosro,
-              borderRadius: BorderRadius.circular(6),
-            ),
-            child: Text(
-              buttonText,
-              style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: Colors.white),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildTrendChart(List<DayTrend> trends) {
-    // Siapkan label 7 hari terakhir
+  // Komponen Kartu Grafik Analitik 7 Hari
+  Widget _buildAnalyticsCard(List<DayTrend> trends) {
     final now = DateTime.now();
     final List<String> dayLabels = [];
     final List<BarChartGroupData> barGroups = [];
-
     double maxY = 50;
 
     const dayNames = ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'];
@@ -842,15 +752,15 @@ class AdminDashboardScreen extends ConsumerWidget {
           barRods: [
             BarChartRodData(
               toY: inQty,
-              color: AppColors.daun,
-              width: 8,
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(3)),
+              color: const Color(0xFF16A34A),
+              width: 9,
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
             ),
             BarChartRodData(
               toY: outQty,
-              color: AppColors.biruTruk,
-              width: 8,
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(3)),
+              color: AppColors.merahSosro,
+              width: 9,
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
             ),
           ],
         ),
@@ -858,16 +768,16 @@ class AdminDashboardScreen extends ConsumerWidget {
     }
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: AppColors.permukaan,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.garis),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: const Color(0xFFE2E8F0)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.02),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
@@ -881,27 +791,39 @@ class AdminDashboardScreen extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Tren Pergerakan 7 Hari Terakhir',
-                    style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: AppColors.tinta),
+                    'Analisis Mutasi Stok',
+                    style: TextStyle(
+                      fontSize: 14.5,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.tinta,
+                    ),
                   ),
                   Text(
-                    'Perbandingan dus masuk vs keluar',
+                    'Perbandingan arus dus masuk & keluar',
                     style: TextStyle(fontSize: 11, color: AppColors.abuTinta),
                   ),
                 ],
               ),
-              Row(
-                children: [
-                  _buildLegend(color: AppColors.daun, label: 'Masuk'),
-                  const SizedBox(width: 8),
-                  _buildLegend(color: AppColors.biruTruk, label: 'Keluar'),
-                ],
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF1F5F9),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: const Text(
+                  '7 Hari Terakhir',
+                  style: TextStyle(
+                    fontSize: 10.5,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.abuTinta,
+                  ),
+                ),
               ),
             ],
           ),
           const SizedBox(height: 18),
           SizedBox(
-            height: 140,
+            height: 145,
             child: BarChart(
               BarChartData(
                 alignment: BarChartAlignment.spaceAround,
@@ -943,7 +865,7 @@ class AdminDashboardScreen extends ConsumerWidget {
                         final idx = value.toInt();
                         if (idx < 0 || idx >= dayLabels.length) return const SizedBox.shrink();
                         return Padding(
-                          padding: const EdgeInsets.only(top: 4),
+                          padding: const EdgeInsets.only(top: 6),
                           child: Text(
                             dayLabels[idx],
                             style: const TextStyle(fontSize: 10, color: AppColors.abuTinta, fontWeight: FontWeight.w600),
@@ -956,9 +878,9 @@ class AdminDashboardScreen extends ConsumerWidget {
                 gridData: FlGridData(
                   show: true,
                   drawVerticalLine: false,
-                  getDrawingHorizontalLine: (value) => FlLine(
-                    color: AppColors.garis,
-                    strokeWidth: 0.8,
+                  getDrawingHorizontalLine: (value) => const FlLine(
+                    color: Color(0xFFF1F5F9),
+                    strokeWidth: 1,
                   ),
                 ),
                 borderData: FlBorderData(show: false),
@@ -966,69 +888,91 @@ class AdminDashboardScreen extends ConsumerWidget {
               ),
             ),
           ),
+          const SizedBox(height: 12),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _buildLegendPill(color: const Color(0xFF16A34A), label: 'Stok Masuk'),
+              const SizedBox(width: 14),
+              _buildLegendPill(color: AppColors.merahSosro, label: 'Stok Keluar'),
+            ],
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildLegend({required Color color, required String label}) {
+  Widget _buildLegendPill({required Color color, required String label}) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         Container(
           width: 8,
           height: 8,
-          decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(2)),
+          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
         ),
-        const SizedBox(width: 4),
+        const SizedBox(width: 6),
         Text(
           label,
-          style: const TextStyle(fontSize: 10, color: AppColors.abuTinta, fontWeight: FontWeight.w600),
+          style: const TextStyle(fontSize: 11, color: AppColors.abuTinta, fontWeight: FontWeight.w600),
         ),
       ],
     );
   }
 
-  Widget _buildQuickButton({
+  // Komponen Action Tile Cepat
+  Widget _buildActionTile({
     required IconData icon,
     required String label,
-    required Color color,
+    required String subtitle,
+    required Color tintColor,
+    required Color tintBg,
     required VoidCallback onTap,
   }) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(8),
+      borderRadius: BorderRadius.circular(16),
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
         decoration: BoxDecoration(
-          color: AppColors.permukaan,
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: AppColors.garis),
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: const Color(0xFFE2E8F0)),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.02),
-              blurRadius: 3,
-              offset: const Offset(0, 1),
+              blurRadius: 6,
+              offset: const Offset(0, 2),
             ),
           ],
         ),
         child: Column(
           children: [
             Container(
-              padding: const EdgeInsets.all(6),
+              padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(6),
+                color: tintBg,
+                borderRadius: BorderRadius.circular(10),
               ),
-              child: Icon(icon, color: color, size: 18),
+              child: Icon(icon, color: tintColor, size: 20),
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: 6),
             Text(
               label,
               style: const TextStyle(
-                fontSize: 10.5,
-                fontWeight: FontWeight.w600,
+                fontSize: 11.5,
+                fontWeight: FontWeight.w700,
                 color: AppColors.tinta,
+              ),
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+            Text(
+              subtitle,
+              style: const TextStyle(
+                fontSize: 9.5,
+                color: Color(0xFF94A3B8),
               ),
               textAlign: TextAlign.center,
               maxLines: 1,
@@ -1040,17 +984,23 @@ class AdminDashboardScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildStockCard(StockSummary summary) {
+  // Komponen Kartu Stok Produk Modern
+  Widget _buildModernStockCard(StockSummary summary) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      padding: const EdgeInsets.all(12),
+      margin: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: AppColors.permukaan,
-        borderRadius: BorderRadius.circular(8),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: summary.isLowStock ? AppColors.kuningMarka : AppColors.garis,
-          width: summary.isLowStock ? 1.5 : 1,
-        ),
+          color: summary.isLowStock ? AppColors.kuningMarka : const Color(0xFFE2E8F0)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.02),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1062,20 +1012,29 @@ class AdminDashboardScreen extends ConsumerWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF1F5F9),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Text(
+                        summary.code,
+                        style: const TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.tinta,
+                          fontFamily: 'monospace',
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 4),
                     Text(
                       summary.name,
                       style: const TextStyle(
-                        fontSize: 13,
+                        fontSize: 13.5,
                         fontWeight: FontWeight.w700,
                         color: AppColors.tinta,
-                      ),
-                    ),
-                    Text(
-                      summary.code,
-                      style: const TextStyle(
-                        fontSize: 11,
-                        color: AppColors.abuTinta,
-                        fontFamily: 'monospace',
                       ),
                     ),
                   ],
@@ -1094,25 +1053,23 @@ class AdminDashboardScreen extends ConsumerWidget {
                   ),
                   if (summary.isLowStock)
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                       decoration: BoxDecoration(
                         color: AppColors.kuningMarkaMuda,
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: const Text(
-                        'Stok Minimum',
-                        style: TextStyle(fontSize: 9, color: AppColors.teksPeringatan, fontWeight: FontWeight.bold),
+                        'Stok Menipis',
+                        style: TextStyle(fontSize: 9.5, color: AppColors.teksPeringatan, fontWeight: FontWeight.bold),
                       ),
                     ),
                 ],
               ),
             ],
           ),
-          const SizedBox(height: 6),
-          const Divider(height: 1, color: AppColors.garis),
-          const SizedBox(height: 6),
-
-          // Palet & Baris breakdown
+          const SizedBox(height: 8),
+          const Divider(height: 1, color: Color(0xFFF1F5F9)),
+          const SizedBox(height: 8),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -1122,7 +1079,7 @@ class AdminDashboardScreen extends ConsumerWidget {
               ),
               Text(
                 'Batas Min: ${summary.minStockBoxes} dus',
-                style: const TextStyle(fontSize: 11, color: AppColors.abuTinta),
+                style: const TextStyle(fontSize: 11, color: Color(0xFF94A3B8)),
               ),
             ],
           ),
@@ -1131,23 +1088,24 @@ class AdminDashboardScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildRecentActivityItem(ActivityLog activity) {
+  // Komponen Riwayat Aktivitas Modern
+  Widget _buildModernActivityItem(ActivityLog activity) {
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: AppColors.permukaan,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: AppColors.garis),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: const Color(0xFFE2E8F0)),
       ),
       child: Row(
         children: [
           CircleAvatar(
-            radius: 14,
+            radius: 16,
             backgroundColor: AppColors.merahMuda,
-            child: const Icon(Icons.person_outline, size: 16, color: AppColors.merahSosro),
+            child: const Icon(Icons.person_outline_rounded, size: 18, color: AppColors.merahSosro),
           ),
-          const SizedBox(width: 10),
+          const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -1157,18 +1115,18 @@ class AdminDashboardScreen extends ConsumerWidget {
                   children: [
                     Text(
                       activity.actorNameSnapshot,
-                      style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: AppColors.tinta),
+                      style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w700, color: AppColors.tinta),
                     ),
                     Text(
                       DateFormatter.formatDateTime(activity.createdAt),
-                      style: const TextStyle(fontSize: 10, color: AppColors.abuTinta),
+                      style: const TextStyle(fontSize: 10, color: Color(0xFF94A3B8)),
                     ),
                   ],
                 ),
                 const SizedBox(height: 2),
                 Text(
                   activity.description ?? activity.action,
-                  style: const TextStyle(fontSize: 11, color: AppColors.tinta),
+                  style: const TextStyle(fontSize: 11.5, color: AppColors.abuTinta),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
