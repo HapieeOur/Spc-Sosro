@@ -25,31 +25,36 @@ class AppButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final (bgColor, fgColor, borderSide) = switch (variant) {
+    final (bgColor, fgColor, borderSide, useGradient) = switch (variant) {
       AppButtonVariant.primary => (
-          AppColors.daun,
+          AppColors.merahSosro,
           Colors.white,
-          BorderSide.none
+          BorderSide.none,
+          true,
         ),
       AppButtonVariant.secondary => (
-          AppColors.daunMuda,
-          AppColors.daunTua,
-          BorderSide.none
+          AppColors.merahMuda,
+          AppColors.merahTua,
+          BorderSide.none,
+          false,
         ),
       AppButtonVariant.stockOut => (
           AppColors.biruTruk,
           Colors.white,
-          BorderSide.none
+          BorderSide.none,
+          false,
         ),
       AppButtonVariant.danger => (
           AppColors.bata,
           Colors.white,
-          BorderSide.none
+          BorderSide.none,
+          false,
         ),
       AppButtonVariant.outline => (
           Colors.transparent,
-          AppColors.daun,
-          const BorderSide(color: AppColors.garis, width: 1.5)
+          AppColors.merahSosro,
+          const BorderSide(color: AppColors.garis, width: 1.5),
+          false,
         ),
     };
 
@@ -74,12 +79,41 @@ class AppButton extends StatelessWidget {
                 text,
                 style: TextStyle(
                   fontSize: 15,
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.w700,
                   color: fgColor,
+                  letterSpacing: 0.2,
                 ),
               ),
             ],
           );
+
+    final borderRadius = BorderRadius.circular(10);
+
+    if (useGradient && onPressed != null && !isLoading) {
+      return Container(
+        width: width ?? double.infinity,
+        height: height,
+        decoration: BoxDecoration(
+          gradient: AppColors.primaryButtonGradient,
+          borderRadius: borderRadius,
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.merahSosro.withValues(alpha: 0.25),
+              blurRadius: 8,
+              offset: const Offset(0, 3),
+            ),
+          ],
+        ),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            borderRadius: borderRadius,
+            onTap: onPressed,
+            child: Center(child: content),
+          ),
+        ),
+      );
+    }
 
     return SizedBox(
       width: width ?? double.infinity,
@@ -93,7 +127,7 @@ class AppButton extends StatelessWidget {
           disabledForegroundColor: fgColor.withValues(alpha: 0.5),
           elevation: 0,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: borderRadius,
             side: borderSide,
           ),
           padding: const EdgeInsets.symmetric(horizontal: 16),
