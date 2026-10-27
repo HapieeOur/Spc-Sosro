@@ -4,6 +4,7 @@ import 'package:spc_sosro/core/errors/app_exception.dart';
 import 'package:spc_sosro/models/profile.dart';
 import 'package:spc_sosro/repositories/auth_repository.dart';
 import 'package:spc_sosro/repositories/profile_repository.dart';
+import 'package:spc_sosro/services/supabase_service.dart';
 
 sealed class AuthState {
   const AuthState();
@@ -100,29 +101,47 @@ class AuthController extends StateNotifier<AuthState> {
     }
   }
 
-  Future<bool> register({
+  void clearError() {
+    if (state is AuthStateError || state is AuthStateDenied) {
+      state = const AuthStateSignedOut();
+    }
+  }
+
+  Future<({bool success, String? error})> register({
     required String email,
     required String password,
     required String fullName,
   }) async {
-    state = const AuthStateLoading();
     try {
-      await _authRepo.signUp(
+      final authResponse = await _authRepo.signUp(
         email: email,
         password: password,
         fullName: fullName,
       );
-      // Keluarkan sesi otomatis karena akun baru berstatus pending approval
+
+      // Pastikan status akun baru adalah non-aktif (menunggu persetujuan / ACC admin)
+      final user = authResponse.user;
+      if (user != null) {
+        try {
+          await SupabaseService.client
+              .from('profiles')
+              .update({'is_active': false})
+              .eq('id', user.id);
+        } catch (_) {}
+      }
+
+      // Pastikan sesi dikeluarkan agar tidak login otomatis sebelum disetujui admin
       await _authRepo.signOut();
       state = const AuthStateSignedOut();
-      return true;
+      return (success: true, error: null);
     } catch (e) {
+      String message;
       if (e is AppException) {
-        state = AuthStateError(e.message);
+        message = e.message;
       } else {
-        state = AuthStateError(e.toString());
+        message = e.toString();
       }
-      return false;
+      return (success: false, error: message);
     }
   }
 

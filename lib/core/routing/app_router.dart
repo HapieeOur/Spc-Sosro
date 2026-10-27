@@ -46,17 +46,25 @@ final routerProvider = Provider<GoRouter>((ref) {
       final isOnRegister = state.matchedLocation == '/register';
       final isOnSplash = state.matchedLocation == '/splash';
 
-      // Selama pengecekan sesi awal, tetap di splash
-      if (authState is AuthStateInitial || authState is AuthStateLoading) {
+      // 1. Selama sesi awal belum dicek (booting aplikasi):
+      if (authState is AuthStateInitial) {
         return isOnSplash ? null : '/splash';
       }
 
-      // Jika belum autentikasi, izinkan login dan register
+      // 2. Selama proses loading:
+      // - Jika sedang di splash (cek sesi awal), tetap di splash
+      // - Jika sedang di login atau register, JANGAN redirect ke splash agar tidak flicker / jump!
+      if (authState is AuthStateLoading) {
+        return isOnSplash ? null : null;
+      }
+
+      // 3. Jika belum terautentikasi (signed out, denied / belum di-acc, error):
       if (authState is! AuthStateAuthenticated) {
         if (isOnLogin || isOnRegister) return null;
         return '/login';
       }
 
+      // 4. Jika sudah terautentikasi (AuthStateAuthenticated):
       final profile = authState.profile;
       final isAdmin = profile.role == AppRole.admin;
       final isOnAuthScreen = isOnLogin || isOnRegister || isOnSplash;

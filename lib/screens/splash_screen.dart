@@ -21,33 +21,43 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      backgroundColor: AppColors.background,
+    return Scaffold(
+      backgroundColor: AppColors.permukaan,
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              Icons.inventory_2_rounded,
-              size: 64,
-              color: AppColors.primary700,
+            Image.asset(
+              'assets/images/sosro_logo.png',
+              width: 260,
+              fit: BoxFit.contain,
             ),
-            SizedBox(height: 16),
-            Text(
-              'SPC Pallet Counter',
+            const SizedBox(height: 8),
+            const Text(
+              'SPC PALLET COUNTER',
               style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.w700,
-                color: AppColors.primary900,
+                fontFamily: 'BarlowSemiCondensed',
+                fontSize: 18,
+                fontWeight: FontWeight.w800,
+                color: AppColors.tinta,
+                letterSpacing: 2.0,
               ),
             ),
-            SizedBox(height: 24),
-            SizedBox(
+            const SizedBox(height: 4),
+            const Text(
+              'Sistem Pencatatan & Kontrol Palet Gudang',
+              style: TextStyle(
+                fontSize: 12,
+                color: AppColors.abuTinta,
+              ),
+            ),
+            const SizedBox(height: 32),
+            const SizedBox(
               width: 24,
               height: 24,
               child: CircularProgressIndicator(
                 strokeWidth: 2.5,
-                color: AppColors.primary600,
+                color: AppColors.merahSosro,
               ),
             ),
           ],

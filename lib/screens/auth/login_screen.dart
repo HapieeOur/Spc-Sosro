@@ -22,6 +22,17 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   bool _obscurePassword = true;
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final currentAuth = ref.read(authControllerProvider);
+      if (currentAuth is AuthStateDenied) {
+        _showPendingApprovalDialog(currentAuth.message);
+      }
+    });
+  }
+
+  @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
@@ -37,8 +48,117 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     }
   }
 
+  void _showPendingApprovalDialog(String message) {
+    showDialog<void>(
+      context: context,
+      barrierDismissible: true,
+      builder: (ctx) {
+        return AlertDialog(
+          backgroundColor: AppColors.permukaan,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          icon: Container(
+            padding: const EdgeInsets.all(12),
+            decoration: const BoxDecoration(
+              color: AppColors.kuningMarkaMuda,
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(
+              Icons.hourglass_top_rounded,
+              size: 40,
+              color: AppColors.teksPeringatan,
+            ),
+          ),
+          title: const Text(
+            'Akun Belum Disetujui',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+              color: AppColors.tinta,
+            ),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                message.isNotEmpty
+                    ? message
+                    : 'Akun Anda saat ini masih menunggu persetujuan (ACC) dari Administrator gudang.',
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.tinta,
+                  height: 1.4,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: AppColors.kertas,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: AppColors.garis),
+                ),
+                child: const Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Icon(
+                      Icons.info_outline_rounded,
+                      size: 20,
+                      color: AppColors.teksPeringatan,
+                    ),
+                    SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                        'Silakan hubungi Administrator gudang untuk mengaktifkan akun Anda sebelum dapat masuk.',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: AppColors.abuTinta,
+                          height: 1.3,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.merahSosro,
+                  foregroundColor: Colors.white,
+                  minimumSize: const Size(double.infinity, 48),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                onPressed: () => Navigator.of(ctx).pop(),
+                child: const Text(
+                  'Mengerti',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    ref.listen<AuthState>(authControllerProvider, (previous, next) {
+      if (next is AuthStateDenied) {
+        _showPendingApprovalDialog(next.message);
+      }
+    });
+
     final authState = ref.watch(authControllerProvider);
     final isLoading = authState is AuthStateLoading;
     String? errorMessage;
@@ -64,36 +184,41 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    // 3 Pallet blocks brand icon
-                    Row(
-                      children: [
-                        _buildMiniPallet(),
-                        const SizedBox(width: 4),
-                        _buildMiniPallet(),
-                        const SizedBox(width: 4),
-                        _buildMiniPallet(),
-                      ],
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(8),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.15),
+                            blurRadius: 6,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Image.asset(
+                        'assets/images/sosro_logo_cropped.png',
+                        height: 36,
+                        fit: BoxFit.contain,
+                      ),
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 10),
                     const Text(
-                      'SPC Sosro',
+                      'SPC Pallet Counter',
                       style: TextStyle(
                         fontFamily: 'BarlowSemiCondensed',
-                        fontSize: 32,
+                        fontSize: 26,
                         fontWeight: FontWeight.w700,
                         color: Colors.white,
-                        letterSpacing: -0.5,
-                        height: 1.0,
+                        letterSpacing: -0.3,
                       ),
                     ),
                     const Text(
-                      'Pallet Counter',
+                      'Sistem Pencatatan Stok Gudang',
                       style: TextStyle(
-                        fontFamily: 'BarlowSemiCondensed',
-                        fontSize: 22,
-                        fontWeight: FontWeight.w500,
-                        color: AppColors.daunMuda,
-                        height: 1.2,
+                        fontSize: 13,
+                        color: AppColors.merahMuda,
                       ),
                     ),
                   ],
@@ -205,7 +330,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
                         Center(
                           child: TextButton(
-                            onPressed: () => context.go('/register'),
+                            onPressed: () {
+                              ref.read(authControllerProvider.notifier).clearError();
+                              context.go('/register');
+                            },
                             child: const Text.rich(
                               TextSpan(
                                 text: 'Belum punya akun? ',
@@ -233,24 +361,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildMiniPallet() {
-    return Container(
-      width: 18,
-      height: 14,
-      decoration: BoxDecoration(
-        color: AppColors.daunMuda,
-        borderRadius: BorderRadius.circular(2),
-      ),
-      child: Align(
-        alignment: Alignment.bottomCenter,
-        child: Container(
-          height: 3,
-          color: AppColors.kayu,
         ),
       ),
     );

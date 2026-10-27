@@ -24,6 +24,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
+  bool _isLoading = false;
+  String? _errorMessage;
 
   @override
   void dispose() {
@@ -36,15 +38,31 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
   Future<void> _submit() async {
     if (_formKey.currentState?.validate() ?? false) {
+      setState(() {
+        _isLoading = true;
+        _errorMessage = null;
+      });
+
       final name = _nameController.text.trim();
-      final success = await ref.read(authControllerProvider.notifier).register(
+      final result = await ref.read(authControllerProvider.notifier).register(
             email: _emailController.text.trim(),
             password: _passwordController.text,
             fullName: name,
           );
 
-      if (success && mounted) {
+      if (!mounted) return;
+      setState(() => _isLoading = false);
+
+      if (result.success) {
+        _nameController.clear();
+        _emailController.clear();
+        _passwordController.clear();
+        _confirmPasswordController.clear();
         _showSuccessDialog(name);
+      } else {
+        setState(() {
+          _errorMessage = result.error;
+        });
       }
     }
   }
@@ -57,15 +75,22 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
         return AlertDialog(
           backgroundColor: AppColors.permukaan,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(16),
           ),
-          icon: const Icon(
-            Icons.hourglass_top_rounded,
-            size: 48,
-            color: AppColors.kuningMarka,
+          icon: Container(
+            padding: const EdgeInsets.all(12),
+            decoration: const BoxDecoration(
+              color: AppColors.merahMuda,
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(
+              Icons.check_circle_rounded,
+              size: 40,
+              color: AppColors.merahSosro,
+            ),
           ),
           title: const Text(
-            'Pendaftaran Berhasil!',
+            'Registrasi Berhasil!',
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 18,
@@ -77,39 +102,40 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                'Akun atas nama $fullName berhasil dibuat.',
+                'Akun operator atas nama $fullName telah berhasil didaftarkan.',
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontSize: 14,
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.w500,
                   color: AppColors.tinta,
                 ),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 14),
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   color: AppColors.kuningMarkaMuda,
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
-                    color: AppColors.kuningMarka.withValues(alpha: 0.4),
+                    color: AppColors.kuningMarka.withValues(alpha: 0.5),
                   ),
                 ),
                 child: const Row(
                   children: [
                     Icon(
-                      Icons.info_outline,
-                      size: 20,
+                      Icons.schedule_rounded,
+                      size: 22,
                       color: AppColors.teksPeringatan,
                     ),
-                    SizedBox(width: 8),
+                    SizedBox(width: 10),
                     Expanded(
                       child: Text(
-                        'Status: Menunggu ACC Admin.\nAnda baru bisa login setelah Administrator gudang menyetujui akun Anda.',
+                        'Silakan tunggu persetujuan (ACC) dari Admin gudang sebelum Anda dapat masuk ke aplikasi.',
                         style: TextStyle(
                           fontSize: 12,
                           color: AppColors.teksPeringatan,
                           height: 1.3,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
                     ),
@@ -123,7 +149,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
               width: double.infinity,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.daun,
+                  backgroundColor: AppColors.merahSosro,
                   foregroundColor: Colors.white,
                   minimumSize: const Size(double.infinity, 48),
                   shape: RoundedRectangleBorder(
@@ -132,11 +158,12 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 ),
                 onPressed: () {
                   Navigator.of(ctx).pop();
+                  ref.read(authControllerProvider.notifier).clearError();
                   context.go('/login');
                 },
                 child: const Text(
                   'Kembali ke Halaman Masuk',
-                  style: TextStyle(fontWeight: FontWeight.w600),
+                  style: TextStyle(fontWeight: FontWeight.bold),
                 ),
               ),
             ),
@@ -148,13 +175,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final authState = ref.watch(authControllerProvider);
-    final isLoading = authState is AuthStateLoading;
-    String? errorMessage;
-
-    if (authState is AuthStateError) {
-      errorMessage = authState.message;
-    }
+    final isLoading = _isLoading;
+    final errorMessage = _errorMessage;
 
     return Scaffold(
       backgroundColor: AppColors.daunTua,
@@ -172,7 +194,10 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     InkWell(
-                      onTap: () => context.go('/login'),
+                      onTap: () {
+                        ref.read(authControllerProvider.notifier).clearError();
+                        context.go('/login');
+                      },
                       borderRadius: BorderRadius.circular(8),
                       child: const Padding(
                         padding: EdgeInsets.symmetric(vertical: 4),
@@ -393,7 +418,10 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                         // Link Kembali ke Login
                         Center(
                           child: TextButton(
-                            onPressed: () => context.go('/login'),
+                            onPressed: () {
+                              ref.read(authControllerProvider.notifier).clearError();
+                              context.go('/login');
+                            },
                             child: const Text.rich(
                               TextSpan(
                                 text: 'Sudah punya akun? ',
