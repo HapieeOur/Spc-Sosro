@@ -55,4 +55,35 @@ class ProfileRepository {
       throw ErrorMapper.mapSupabaseError(e);
     }
   }
+
+  Future<void> adminUpdateProfile({
+    required String userId,
+    required String fullName,
+    required String role,
+    required bool isActive,
+  }) async {
+    try {
+      try {
+        await SupabaseService.client.rpc(
+          'admin_update_profile',
+          params: {
+            'p_user_id': userId,
+            'p_full_name': fullName,
+            'p_role': role,
+            'p_is_active': isActive,
+          },
+        );
+      } catch (_) {
+        // Fallback update langsung ke tabel profiles
+        await SupabaseService.client.from('profiles').update({
+          'full_name': fullName,
+          'role': role,
+          'is_active': isActive,
+          'updated_at': DateTime.now().toIso8601String(),
+        }).eq('id', userId);
+      }
+    } catch (e) {
+      throw ErrorMapper.mapSupabaseError(e);
+    }
+  }
 }

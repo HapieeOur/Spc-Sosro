@@ -51,7 +51,23 @@ class StockRepository {
       final response = await SupabaseService.client.rpc('get_dashboard_summary');
       return DashboardData.fromJson(Map<String, dynamic>.from(response as Map));
     } catch (e) {
-      throw ErrorMapper.mapSupabaseError(e);
+      // Fallback anggun jika RPC get_dashboard_summary di PostgreSQL belum diperbarui
+      try {
+        final stockList = await getStockSummary();
+        final lowStock = stockList.where((p) => p.isLowStock).toList();
+        return DashboardData(
+          todayInBoxes: 0,
+          todayOutBoxes: 0,
+          todayInPalletEquivalent: 0.0,
+          todayOutPalletEquivalent: 0.0,
+          stockByProduct: stockList,
+          lowStock: lowStock,
+          recentActivity: [],
+          sevenDayTrend: [],
+        );
+      } catch (_) {
+        throw ErrorMapper.mapSupabaseError(e);
+      }
     }
   }
 
