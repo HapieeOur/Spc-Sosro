@@ -306,17 +306,18 @@ class _UsersScreenState extends ConsumerState<UsersScreen>
     final profilesAsync = ref.watch(allProfilesProvider);
 
     return Scaffold(
-      backgroundColor: AppColors.kertas,
+      backgroundColor: const Color(0xFFF4F6FA),
       appBar: AppBar(
         title: const Text(
-          'Kelola & Persetujuan Pengguna',
+          'Kelola & ACC Pengguna',
           style: TextStyle(
-            fontWeight: FontWeight.w700,
-            fontSize: 18,
+            fontWeight: FontWeight.w800,
+            fontSize: 22,
             color: AppColors.tinta,
+            letterSpacing: -0.3,
           ),
         ),
-        backgroundColor: AppColors.permukaan,
+        backgroundColor: Colors.transparent,
         elevation: 0,
         surfaceTintColor: Colors.transparent,
         bottom: PreferredSize(
@@ -410,127 +411,132 @@ class _UsersScreenState extends ConsumerState<UsersScreen>
     }
 
     return ListView.separated(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 20),
       itemCount: pendingUsers.length,
-      separatorBuilder: (_, unused) => const SizedBox(height: 12),
+      separatorBuilder: (_, unused) => const SizedBox(height: 10),
       itemBuilder: (context, index) {
         final user = pendingUsers[index];
         return InkWell(
           onTap: () => _showUserDetailSheet(user),
-          borderRadius: BorderRadius.circular(10),
-          child: Card(
-            color: AppColors.permukaan,
-            elevation: 0,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-              side: const BorderSide(color: AppColors.garis),
+          borderRadius: BorderRadius.circular(18),
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(18),
+              border: Border.all(color: const Color(0xFFE2E8F0)),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.02),
+                  blurRadius: 6,
+                  offset: const Offset(0, 2),
+                ),
+              ],
             ),
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      CircleAvatar(
-                        radius: 20,
-                        backgroundColor: AppColors.kuningMarkaMuda,
-                        child: Text(
-                          user.fullName.isNotEmpty ? user.fullName[0].toUpperCase() : 'U',
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.teksPeringatan,
-                          ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    CircleAvatar(
+                      radius: 22,
+                      backgroundColor: AppColors.merahMuda,
+                      child: Text(
+                        user.fullName.isNotEmpty ? user.fullName[0].toUpperCase() : 'U',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w800,
+                          fontSize: 16,
+                          color: AppColors.merahSosro,
                         ),
                       ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              user.fullName,
-                              style: const TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w700,
-                                color: AppColors.tinta,
-                              ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            user.fullName,
+                            style: const TextStyle(
+                              fontSize: 14.5,
+                              fontWeight: FontWeight.w700,
+                              color: AppColors.tinta,
                             ),
-                            const SizedBox(height: 2),
-                            Text(
-                              user.email,
-                              style: const TextStyle(
-                                fontSize: 13,
-                                color: AppColors.abuTinta,
-                              ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            user.email,
+                            style: const TextStyle(
+                              fontSize: 12.5,
+                              color: AppColors.abuTinta,
                             ),
-                            const SizedBox(height: 4),
-                            Text(
-                              'Mendaftar: ${DateFormatter.formatDateTime(user.createdAt)}',
-                              style: const TextStyle(
-                                fontSize: 11,
-                                color: AppColors.abuTinta,
-                              ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Mendaftar: ${DateFormatter.formatDateTime(user.createdAt)}',
+                            style: const TextStyle(
+                              fontSize: 11,
+                              color: Color(0xFF94A3B8),
                             ),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: AppColors.kuningMarkaMuda,
-                          borderRadius: BorderRadius.circular(4),
-                          border: Border.all(color: AppColors.kuningMarka.withValues(alpha: 0.3)),
-                        ),
-                        child: const Text(
-                          'Menunggu ACC',
-                          style: TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.teksPeringatan,
                           ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: AppColors.merahMuda,
+                        borderRadius: BorderRadius.circular(6),
+                        border: Border.all(color: AppColors.merahSosro.withValues(alpha: 0.2)),
+                      ),
+                      child: const Text(
+                        'Menunggu ACC',
+                        style: TextStyle(
+                          fontSize: 10.5,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.merahSosro,
                         ),
                       ),
-                    ],
-                  ),
-                  const SizedBox(height: 14),
-                  const Divider(height: 1, color: AppColors.garis),
-                  const SizedBox(height: 12),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: OutlinedButton.icon(
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: AppColors.tinta,
-                            side: const BorderSide(color: AppColors.garis),
-                            padding: const EdgeInsets.symmetric(vertical: 10),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                          ),
-                          icon: const Icon(Icons.info_outline, size: 16),
-                          label: const Text('Detail & Edit', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
-                          onPressed: () => _showUserDetailSheet(user),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                const Divider(height: 1, color: Color(0xFFF1F5F9)),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: AppColors.tinta,
+                          side: const BorderSide(color: Color(0xFFE2E8F0)),
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                         ),
+                        icon: const Icon(Icons.info_outline, size: 16),
+                        label: const Text('Detail & Edit', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
+                        onPressed: () => _showUserDetailSheet(user),
                       ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: ElevatedButton.icon(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.daun,
-                            foregroundColor: Colors.white,
-                            elevation: 0,
-                            padding: const EdgeInsets.symmetric(vertical: 10),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                          ),
-                          icon: const Icon(Icons.check, size: 16),
-                          label: const Text('ACC Akun', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
-                          onPressed: () => _handleSetUserStatus(user, true),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: ElevatedButton.icon(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.merahSosro,
+                          foregroundColor: Colors.white,
+                          elevation: 0,
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                         ),
+                        icon: const Icon(Icons.check, size: 16),
+                        label: const Text('ACC Akun', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                        onPressed: () => _handleSetUserStatus(user, true),
                       ),
-                    ],
-                  ),
-                ],
-              ),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
         );
@@ -541,42 +547,48 @@ class _UsersScreenState extends ConsumerState<UsersScreen>
   Widget _buildAllUsersTab(List<Profile> users) {
     return Column(
       children: [
-        // Search bar
+        // Search bar (Membulat seperti di referensi)
         Padding(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-          child: TextField(
-            controller: _searchController,
-            decoration: InputDecoration(
-              hintText: 'Cari nama atau email pengguna...',
-              prefixIcon: const Icon(Icons.search, color: AppColors.abuTinta),
-              suffixIcon: _searchQuery.isNotEmpty
-                  ? IconButton(
-                      icon: const Icon(Icons.clear, color: AppColors.abuTinta),
-                      onPressed: () {
-                        setState(() {
-                          _searchController.clear();
-                          _searchQuery = '';
-                        });
-                      },
-                    )
-                  : null,
-              filled: true,
-              fillColor: AppColors.permukaan,
-              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-                borderSide: const BorderSide(color: AppColors.garis),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-                borderSide: const BorderSide(color: AppColors.garis),
-              ),
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 10),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: const Color(0xFFE2E8F0)),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.02),
+                  blurRadius: 6,
+                  offset: const Offset(0, 2),
+                ),
+              ],
             ),
-            onChanged: (val) {
-              setState(() {
-                _searchQuery = val.trim();
-              });
-            },
+            child: TextField(
+              controller: _searchController,
+              decoration: InputDecoration(
+                hintText: 'Cari nama atau email pengguna...',
+                hintStyle: const TextStyle(fontSize: 13, color: Color(0xFF94A3B8)),
+                prefixIcon: const Icon(Icons.search_rounded, color: AppColors.abuTinta, size: 20),
+                suffixIcon: _searchQuery.isNotEmpty
+                    ? IconButton(
+                        icon: const Icon(Icons.clear, color: AppColors.abuTinta, size: 18),
+                        onPressed: () {
+                          setState(() {
+                            _searchController.clear();
+                            _searchQuery = '';
+                          });
+                        },
+                      )
+                    : null,
+                border: InputBorder.none,
+                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              ),
+              onChanged: (val) {
+                setState(() {
+                  _searchQuery = val.trim();
+                });
+              },
+            ),
           ),
         ),
 
@@ -589,23 +601,29 @@ class _UsersScreenState extends ConsumerState<UsersScreen>
                   icon: Icons.person_off_outlined,
                 )
               : ListView.separated(
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.fromLTRB(16, 2, 16, 20),
                   itemCount: users.length,
                   separatorBuilder: (_, unused) => const SizedBox(height: 10),
                   itemBuilder: (context, index) {
                     final user = users[index];
                     final isAdmin = user.role == AppRole.admin;
 
-                    return Card(
-                      color: AppColors.permukaan,
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        side: const BorderSide(color: AppColors.garis),
+                    return Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: const Color(0xFFE2E8F0)),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.02),
+                            blurRadius: 6,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
                       ),
                       child: InkWell(
                         onTap: () => _showUserDetailSheet(user),
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(16),
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                           child: Row(
@@ -613,7 +631,7 @@ class _UsersScreenState extends ConsumerState<UsersScreen>
                               CircleAvatar(
                                 radius: 20,
                                 backgroundColor:
-                                    isAdmin ? AppColors.merahMuda : AppColors.kertas,
+                                    isAdmin ? AppColors.merahMuda : const Color(0xFFF1F5F9),
                                 child: Icon(
                                   isAdmin
                                       ? Icons.admin_panel_settings
@@ -647,7 +665,7 @@ class _UsersScreenState extends ConsumerState<UsersScreen>
                                           decoration: BoxDecoration(
                                             color: isAdmin
                                                 ? AppColors.merahSosro
-                                                : AppColors.kertas,
+                                                : const Color(0xFFF1F5F9),
                                             borderRadius: BorderRadius.circular(4),
                                           ),
                                           child: Text(
@@ -682,11 +700,11 @@ class _UsersScreenState extends ConsumerState<UsersScreen>
                                 onPressed: () => _showEditUserSheet(user),
                               ),
 
-                              // Status & Switch
+                              // Status & Switch (Merah-Putih)
                               if (!isAdmin) ...[
                                 Switch(
                                   value: user.isActive,
-                                  activeThumbColor: AppColors.daun,
+                                  activeTrackColor: AppColors.merahSosro,
                                   onChanged: (newVal) =>
                                       _handleSetUserStatus(user, newVal),
                                 ),
@@ -695,15 +713,15 @@ class _UsersScreenState extends ConsumerState<UsersScreen>
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 8, vertical: 4),
                                   decoration: BoxDecoration(
-                                    color: AppColors.daunMuda,
-                                    borderRadius: BorderRadius.circular(4),
+                                    color: AppColors.merahMuda,
+                                    borderRadius: BorderRadius.circular(6),
                                   ),
                                   child: const Text(
                                     'Aktif',
                                     style: TextStyle(
                                       fontSize: 11,
                                       fontWeight: FontWeight.w700,
-                                      color: AppColors.daunTua,
+                                      color: AppColors.merahSosro,
                                     ),
                                   ),
                                 ),
