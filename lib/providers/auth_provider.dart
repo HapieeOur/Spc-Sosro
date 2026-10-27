@@ -79,25 +79,75 @@ class AuthController extends StateNotifier<AuthState> {
     }
   }
 
-  Future<void> login(String email, String password) async {
+  Future<({bool success, bool isDenied, String? message})> login(
+      String email, String password) async {
     state = const AuthStateLoading();
     try {
       await _authRepo.signIn(email: email, password: password);
-      final profile = await _profileRepo.fetchCurrentProfile();
+
+      Profile profile;
+      try {
+        profile = await _profileRepo.fetchCurrentProfile();
+      } catch (profileError) {
+        // Jika fetch profile gagal (misal RLS block karena akun belum aktif)
+        await _authRepo.signOut();
+        const msg =
+            'Akun Anda belum diaktivasi atau masih menunggu persetujuan (ACC) dari Admin gudang.';
+        state = const AuthStateDenied(msg);
+        return (
+          success: false,
+          isDenied: true,
+          message: msg,
+        );
+      }
 
       if (!profile.isActive) {
         await _authRepo.signOut();
-        state = const AuthStateDenied('Akun Anda sedang menunggu persetujuan (ACC) Admin. Silakan hubungi Administrator gudang.');
-        return;
+        const msg =
+            'Akun Anda belum diaktivasi atau masih menunggu persetujuan (ACC) dari Admin gudang.';
+        state = const AuthStateDenied(msg);
+        return (
+          success: false,
+          isDenied: true,
+          message: msg,
+        );
       }
 
       state = AuthStateAuthenticated(profile);
+      return (success: true, isDenied: false, message: null);
     } catch (e) {
-      if (e is AppException) {
-        state = AuthStateError(e.message);
-      } else {
-        state = AuthStateError(e.toString());
+      await _authRepo.signOut();
+
+      final errorMsg = e is AppException ? e.message : e.toString();
+      final lower = errorMsg.toLowerCase();
+
+      // Deteksi jika error berhubungan dengan aktivasi / konfirmasi / ACC
+      final isActivationIssue = lower.contains('not confirmed') ||
+          lower.contains('belum aktif') ||
+          lower.contains('belum diaktivasi') ||
+          lower.contains('belum teraktivasi') ||
+          lower.contains('persetujuan') ||
+          lower.contains('acc') ||
+          lower.contains('inactive') ||
+          lower.contains('disabled');
+
+      if (isActivationIssue) {
+        const msg =
+            'Akun Anda belum diaktivasi atau masih menunggu persetujuan (ACC) dari Admin gudang.';
+        state = const AuthStateDenied(msg);
+        return (
+          success: false,
+          isDenied: true,
+          message: msg,
+        );
       }
+
+      state = AuthStateError(errorMsg);
+      return (
+        success: false,
+        isDenied: false,
+        message: errorMsg,
+      );
     }
   }
 

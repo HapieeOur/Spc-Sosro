@@ -20,6 +20,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _obscurePassword = true;
+  bool _isDialogOpen = false;
 
   @override
   void initState() {
@@ -39,16 +40,23 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     super.dispose();
   }
 
-  void _submit() {
+  Future<void> _submit() async {
     if (_formKey.currentState?.validate() ?? false) {
-      ref.read(authControllerProvider.notifier).login(
+      final result = await ref.read(authControllerProvider.notifier).login(
             _emailController.text.trim(),
             _passwordController.text,
           );
+      if (!mounted) return;
+      if (result.isDenied) {
+        _showPendingApprovalDialog(result.message ?? '');
+      }
     }
   }
 
   void _showPendingApprovalDialog(String message) {
+    if (_isDialogOpen) return;
+    _isDialogOpen = true;
+
     showDialog<void>(
       context: context,
       barrierDismissible: true,
@@ -56,25 +64,25 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         return AlertDialog(
           backgroundColor: AppColors.permukaan,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(20),
           ),
           icon: Container(
-            padding: const EdgeInsets.all(12),
-            decoration: const BoxDecoration(
-              color: AppColors.kuningMarkaMuda,
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: AppColors.kuningMarka.withValues(alpha: 0.12),
               shape: BoxShape.circle,
             ),
             child: const Icon(
-              Icons.hourglass_top_rounded,
-              size: 40,
-              color: AppColors.teksPeringatan,
+              Icons.lock_clock_rounded,
+              size: 44,
+              color: AppColors.kuningMarka,
             ),
           ),
           title: const Text(
-            'Akun Belum Disetujui',
+            'Akun Belum Teraktivasi',
             textAlign: TextAlign.center,
             style: TextStyle(
-              fontSize: 18,
+              fontSize: 20,
               fontWeight: FontWeight.w700,
               color: AppColors.tinta,
             ),
@@ -85,7 +93,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               Text(
                 message.isNotEmpty
                     ? message
-                    : 'Akun Anda saat ini masih menunggu persetujuan (ACC) dari Administrator gudang.',
+                    : 'Akun Anda saat ini belum aktif atau masih menunggu persetujuan (ACC) dari Administrator gudang.',
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontSize: 14,
@@ -99,7 +107,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   color: AppColors.kertas,
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(10),
                   border: Border.all(color: AppColors.garis),
                 ),
                 child: const Row(
@@ -108,16 +116,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     Icon(
                       Icons.info_outline_rounded,
                       size: 20,
-                      color: AppColors.teksPeringatan,
+                      color: AppColors.kuningMarka,
                     ),
                     SizedBox(width: 10),
                     Expanded(
                       child: Text(
-                        'Silakan hubungi Administrator gudang untuk mengaktifkan akun Anda sebelum dapat masuk.',
+                        'Silakan hubungi Administrator gudang untuk mengaktivasi akun Anda sebelum dapat masuk ke aplikasi.',
                         style: TextStyle(
                           fontSize: 12,
                           color: AppColors.abuTinta,
-                          height: 1.3,
+                          height: 1.4,
                         ),
                       ),
                     ),
@@ -126,29 +134,37 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               ),
             ],
           ),
+          actionsPadding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
           actions: [
             SizedBox(
               width: double.infinity,
+              height: 48,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.merahSosro,
                   foregroundColor: Colors.white,
-                  minimumSize: const Size(double.infinity, 48),
+                  elevation: 0,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(10),
                   ),
                 ),
                 onPressed: () => Navigator.of(ctx).pop(),
                 child: const Text(
                   'Mengerti',
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
               ),
             ),
           ],
         );
       },
-    );
+    ).then((_) {
+      _isDialogOpen = false;
+      ref.read(authControllerProvider.notifier).clearError();
+    });
   }
 
   @override
@@ -163,9 +179,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     final isLoading = authState is AuthStateLoading;
     String? errorMessage;
 
+    // HANYA tampilkan notif error inline jika BUKAN masalah akun belum aktif
     if (authState is AuthStateError) {
-      errorMessage = authState.message;
-    } else if (authState is AuthStateDenied) {
       errorMessage = authState.message;
     }
 
