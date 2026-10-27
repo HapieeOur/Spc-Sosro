@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:spc_sosro/core/routing/app_router.dart';
 import 'package:spc_sosro/providers/auth_provider.dart';
 import 'package:spc_sosro/widgets/fluid_background.dart';
 
@@ -14,9 +15,20 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(authControllerProvider.notifier).checkSession();
-    });
+    _startSplashScreen();
+  }
+
+  Future<void> _startSplashScreen() async {
+    // Tampilkan splash screen minimal 2.2 detik sambil memeriksa sesi
+    await Future.wait([
+      ref.read(authControllerProvider.notifier).checkSession(),
+      Future.delayed(const Duration(milliseconds: 2200)),
+    ]);
+
+    if (!mounted) return;
+
+    // Tandai bahwa splash screen sudah selesai ditampilkan dan siap bernavigasi
+    ref.read(splashCompletedProvider.notifier).state = true;
   }
 
   @override
@@ -29,7 +41,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
             children: [
               const Spacer(flex: 3),
 
-              // Brand Presentation (Direct integration without any box container)
+              // Logo Sosro Putih Bersih (Tanpa Kotakan)
               Image.asset(
                 'assets/images/sosro_logo_white.png',
                 height: 52,
@@ -42,7 +54,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontFamily: 'BarlowSemiCondensed',
-                  fontSize: 22,
+                  fontSize: 24,
                   fontWeight: FontWeight.w800,
                   color: Colors.white,
                   letterSpacing: 2.5,
@@ -63,7 +75,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
 
               const Spacer(flex: 3),
 
-              // Modern Minimalist Loading Indicator
+              // Loading Spinner Halus
               SizedBox(
                 width: 26,
                 height: 26,

@@ -20,11 +20,16 @@ import 'package:spc_sosro/screens/user/transaction_history_screen.dart';
 import 'package:spc_sosro/screens/user/user_dashboard_screen.dart';
 import 'package:spc_sosro/screens/user/user_shell.dart';
 
+final splashCompletedProvider = StateProvider<bool>((ref) => false);
+
 class AppRouterNotifier extends ChangeNotifier {
   final Ref _ref;
 
   AppRouterNotifier(this._ref) {
     _ref.listen(authControllerProvider, (_, _) {
+      notifyListeners();
+    });
+    _ref.listen(splashCompletedProvider, (_, _) {
       notifyListeners();
     });
   }
@@ -41,20 +46,19 @@ final routerProvider = Provider<GoRouter>((ref) {
     initialLocation: '/splash',
     refreshListenable: notifier,
     redirect: (context, state) {
+      final isSplashCompleted = ref.read(splashCompletedProvider);
       final authState = ref.read(authControllerProvider);
       final isOnLogin = state.matchedLocation == '/login';
       final isOnRegister = state.matchedLocation == '/register';
       final isOnSplash = state.matchedLocation == '/splash';
 
-      // 1. Selama sesi awal belum dicek (booting aplikasi):
-      if (authState is AuthStateInitial) {
+      // 1. Selama splash / loading screen awal belum selesai ditampilkan:
+      if (!isSplashCompleted) {
         return isOnSplash ? null : '/splash';
       }
 
-      // 2. Selama proses loading:
-      // - Jika sedang di splash (cek sesi awal), tetap di splash
-      // - Jika sedang di login atau register, JANGAN redirect ke splash agar tidak flicker / jump!
-      if (authState is AuthStateLoading) {
+      // 2. Selama proses loading (jika ada proses auth lanjutan):
+      if (authState is AuthStateInitial || authState is AuthStateLoading) {
         return isOnSplash ? null : null;
       }
 

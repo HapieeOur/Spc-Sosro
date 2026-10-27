@@ -188,70 +188,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       backgroundColor: const Color(0xFF4A080A),
       body: Column(
         children: [
-          // Top Header: Fluid Wave & 3D Spheres Background
-          FluidSphereBackground(
-            height: 220,
-            child: SafeArea(
-              bottom: false,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.16),
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                          color: Colors.white.withValues(alpha: 0.25),
-                        ),
-                      ),
-                      child: const Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            Icons.warehouse_rounded,
-                            size: 13,
-                            color: Colors.white,
-                          ),
-                          SizedBox(width: 6),
-                          Text(
-                            'WMS PALLET COUNTER',
-                            style: TextStyle(
-                              fontFamily: 'BarlowSemiCondensed',
-                              fontSize: 11,
-                              fontWeight: FontWeight.w700,
-                              color: Colors.white,
-                              letterSpacing: 1.2,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    const Text(
-                      'PT Sinar Sosro',
-                      style: TextStyle(
-                        fontFamily: 'BarlowSemiCondensed',
-                        fontSize: 26,
-                        fontWeight: FontWeight.w800,
-                        color: Colors.white,
-                        letterSpacing: -0.2,
-                      ),
-                    ),
-                    Text(
-                      'Pusat Distribusi & Kontrol Stok Palet',
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: Colors.white.withValues(alpha: 0.85),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+          // Top Header: Pure Fluid Wave & 3D Spheres Background (Clean, matches reference mockup)
+          const FluidSphereBackground(
+            height: 200,
           ),
 
           // Bottom Sheet: White surface with 32dp top rounded corners

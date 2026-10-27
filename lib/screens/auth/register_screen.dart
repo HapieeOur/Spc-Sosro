@@ -182,72 +182,51 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       backgroundColor: const Color(0xFF4A080A),
       body: Column(
         children: [
-          // Header Top: Fluid Wave & 3D Spheres Background
+          // Header Top: Fluid Wave & 3D Spheres with Clean Back Button
           FluidSphereBackground(
-            height: 190,
+            height: 140,
             child: SafeArea(
               bottom: false,
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    InkWell(
-                      onTap: () {
-                        ref.read(authControllerProvider.notifier).clearError();
-                        context.go('/login');
-                      },
-                      borderRadius: BorderRadius.circular(20),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.18),
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                            color: Colors.white.withValues(alpha: 0.25),
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                child: Align(
+                  alignment: Alignment.bottomLeft,
+                  child: InkWell(
+                    onTap: () {
+                      ref.read(authControllerProvider.notifier).clearError();
+                      context.go('/login');
+                    },
+                    borderRadius: BorderRadius.circular(20),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: Colors.white.withValues(alpha: 0.3),
+                        ),
+                      ),
+                      child: const Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.arrow_back_ios_new,
+                            size: 13,
+                            color: Colors.white,
                           ),
-                        ),
-                        child: const Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.arrow_back_ios_new,
-                              size: 13,
+                          SizedBox(width: 6),
+                          Text(
+                            'Kembali ke Masuk',
+                            style: TextStyle(
+                              fontSize: 12,
                               color: Colors.white,
+                              fontWeight: FontWeight.w600,
                             ),
-                            SizedBox(width: 6),
-                            Text(
-                              'Kembali ke Masuk',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.white,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
-                    const SizedBox(height: 12),
-                    const Text(
-                      'Pendaftaran Operator',
-                      style: TextStyle(
-                        fontFamily: 'BarlowSemiCondensed',
-                        fontSize: 24,
-                        fontWeight: FontWeight.w800,
-                        color: Colors.white,
-                        letterSpacing: -0.2,
-                      ),
-                    ),
-                    Text(
-                      'Buat akun baru untuk pencatatan palet gudang',
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: Colors.white.withValues(alpha: 0.85),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
               ),
             ),
@@ -284,7 +263,28 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                         height: 32,
                         fit: BoxFit.contain,
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 14),
+
+                      const Text(
+                        'Pendaftaran Operator',
+                        style: TextStyle(
+                          fontFamily: 'BarlowSemiCondensed',
+                          fontSize: 24,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.tinta,
+                          letterSpacing: -0.2,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+
+                      const Text(
+                        'Lengkapi data untuk mendaftar akun operator baru.',
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: AppColors.abuTinta,
+                        ),
+                      ),
+                      const SizedBox(height: 20),
 
                       if (errorMessage != null) ...[
                         Container(
